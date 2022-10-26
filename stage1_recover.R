@@ -22,9 +22,11 @@ s3 <- arrow::s3_bucket("drivers", endpoint_override = "s3.flare-forecast.org")
 # Set desired dates and threads
 # Adjust threads between 70 - 1120 depending on available RAM, CPU, + bandwidth
 threads <- 16
-download_all <- TRUE
+download_all <- FALSE
 
 start <- as.Date("2020-09-25")
+
+#NOTE: NEED TO REDO 2021-08-14
 
 s3$CreateDir("noaa/gefs-v12/stage1/0")
 s3$CreateDir("noaa/gefs-v12/stage1/18")
