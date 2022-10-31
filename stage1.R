@@ -23,12 +23,12 @@ s3 <- arrow::s3_bucket("drivers", endpoint_override = "s3.flare-forecast.org")
 # Adjust threads between 70 - 1120 depending on available RAM, CPU, + bandwidth
 threads <- 4
 
-s3$CreateDir("noaa/gefs-v12/stage1")
-gefs <- s3$path("noaa/gefs-v12/stage1")
+gefs <- s3$path("noaa/gefs-v12/stage1/0")
 have <- gefs$ls()
 have_days <- as.Date(basename(have))
 start <- max(have_days, na.rm=TRUE)
-have_cycles <- basename(gefs$ls(start))
+#start <- as.Date("2022-10-08")
+#have_cycles <- basename(gefs$ls(start))
 
 aws <- arrow::s3_bucket("noaa-gefs-pds", anonymous = TRUE)
 avail <- aws$ls()

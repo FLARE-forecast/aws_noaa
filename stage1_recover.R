@@ -26,7 +26,7 @@ download_all <- FALSE
 
 start <- as.Date("2020-09-25")
 
-#NOTE: NEED TO REDO 2021-08-14
+#NOTE: NEED TO REDO 2021-08-14, 2021-11-16
 
 s3$CreateDir("noaa/gefs-v12/stage1/0")
 s3$CreateDir("noaa/gefs-v12/stage1/18")
@@ -46,6 +46,7 @@ if((length(have0) > 0 & length(have0) > 18) & !download_all){
   full_dates <- full_dates[include_dates]
 }
 
+full_dates <- c("2021-08-14", "2021-11-16")
 
 cycles <- c("06", "12", "18")
 cycle_dates <- list()
