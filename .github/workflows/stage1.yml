@@ -7,7 +7,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     container:
-      image: rqthomas/rocker-neon4cast
+      image: eco4cast/rocker-neon4cast:dev-osgeo
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
