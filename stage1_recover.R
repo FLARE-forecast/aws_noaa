@@ -46,7 +46,6 @@ if((length(have0) > 0 & length(have0) > 18) & !download_all){
   full_dates <- full_dates[include_dates]
 }
 
-full_dates <- c("2021-01-26")
 
 cycles <- c("06", "12", "18")
 cycle_dates <- list()

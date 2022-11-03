@@ -17,7 +17,7 @@ Sys.unsetenv("AWS_S3_ENDPOINT")
 Sys.setenv(AWS_EC2_METADATA_DISABLED="TRUE")
 write_s3 <- TRUE
 reprocess_all <- FALSE
-real_time_processing <- FALSE
+real_time_processing <- TRUE
 
 s3_stage1 <- arrow::s3_bucket("drivers/noaa/gefs-v12/stage1", 
                               endpoint_override =  "s3.flare-forecast.org",
@@ -33,7 +33,7 @@ df <- arrow::open_dataset(s3_stage1, partitioning = c("cycle", "start_date"))
 if(real_time_processing){
   dates <- as.character(seq(Sys.Date() - lubridate::days(6), Sys.Date(), by = "1 day"))
 }else{
-  dates <- as.character(seq(lubridate::as_date("2021-12-01"), lubridate::as_date("2022-04-01"), by = "1 day"))
+  dates <- as.character(seq(lubridate::as_date("2020-09-25"), lubridate::as_date("2022-10-30"), by = "1 day"))
 }
 
 cycles <- 0
