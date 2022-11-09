@@ -10,7 +10,7 @@ library(purrr)
 library(dplyr)
 
 # be littler-compatible
-#readRenviron("~/.Renviron")
+readRenviron("~/.Renviron")
 print(paste0("Start: ",Sys.time()))
 
 # Set destination bucket
