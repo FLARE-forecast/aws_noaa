@@ -10,7 +10,7 @@ library(dplyr)
 library(ggplot2)
 library(gefs4cast)
 print(paste0("Start: ",Sys.time()))
-rebuild <- TRUE
+rebuild <- FALSE
 
 source(system.file("examples", "temporal_disaggregation.R", package = "gefs4cast"))
 
@@ -68,7 +68,8 @@ df <- arrow::open_dataset(stage1_local)
 purrr::walk(sites, function(site, df){
   message(site)
   message(Sys.time())
-  if(site %in% s3_stage3_parquet$ls() | rebuild){
+  
+  if(site %in% s3_stage3_parquet$ls()){
     d <- arrow::open_dataset(s3_stage3_parquet$path(site)) %>% 
       mutate(start_date = lubridate::as_date(datetime)) |> 
       collect()
@@ -80,6 +81,12 @@ purrr::walk(sites, function(site, df){
     date_range <- as.character(seq(max_start_date, Sys.Date(), by = "1 day"))
     do_run <- length(date_range) > 1
   }else{
+    date_range <- as.character(seq(lubridate::as_date("2020-09-25"), Sys.Date(), by = "1 day"))
+    d2 <- NULL
+    do_run <- TRUE
+  }
+  
+  if(rebuild){
     date_range <- as.character(seq(lubridate::as_date("2020-09-25"), Sys.Date(), by = "1 day"))
     d2 <- NULL
     do_run <- TRUE
@@ -127,8 +134,3 @@ df = df
 #ggsave(p, filename = paste0("/home/rstudio/", sites[i],".pdf"), device = "pdf", height = 6, width = 12)
 unlink(file.path(base_dir,"parquet"),recursive = TRUE)
 print(paste0("End: ",Sys.time()))
-
-
-
-
-

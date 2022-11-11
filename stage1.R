@@ -8,6 +8,7 @@
 library(gefs4cast)
 library(purrr)
 library(dplyr)
+library(tidyverse)
 
 # be littler-compatible
 readRenviron("~/.Renviron")
@@ -49,47 +50,72 @@ cycle_dates <- list()
 
 locations <- "site_list.csv"
 
-if(start <= avail_day -1 ) {
-  # If strictly more than a full day behind, get all records up to day before.
-  full_dates <- seq(start, avail_day-1, by= "1 day")
-  map(full_dates, noaa_gefs, cycle="00", threads=threads, gdal_ops="-co compress=zstd", s3=s3, locations = locations)
+s3 <- arrow::s3_bucket("drivers/noaa/gefs-v12/stage1/0", endpoint_override = "s3.flare-forecast.org")
+s3 <- arrow::open_dataset(s3, partitioning = "reference_date")
+
+d <- s3 %>% filter(variable == "TMP") %>% 
+  group_by(reference_date, parameter) %>% 
+  summarise(max = max(horizon)) %>% 
+  collect()
+
+missing_dates <- d %>% 
+  filter(parameter < 31 & max < 840) %>% 
+  distinct(reference_date) %>% 
+  pull(reference_date)
+
+full_dates <-  unique(c(as.Date(missing_dates), avail_day))
+
+for(i in 1:length(full_dates)){
+  
+  map(full_dates[i], noaa_gefs, cycle="00", threads=threads, s3=s3, locations = locations)
   map(cycles, 
       function(cy) {
-        map(full_dates, noaa_gefs, cycle=cy, max_horizon = 6,
-            threads=threads, gdal_ops="-co compress=zstd", s3=s3, locations = locations)
+        map(full_dates[i], noaa_gefs, cycle=cy, max_horizon = 6,
+            threads=threads, s3=s3, gdal_ops="", locations = locations)
       })
-  
-  ## And also get available records for the current day:
-  noaa_gefs(avail_day, cycle="00", threads=threads, gdal_ops="-co compress=zstd", s3=s3, locations = locations)
-  map(avail_cycles, function(cy) 
-    noaa_gefs(avail_day, cycle=cy, threads=threads, gdal_ops="-co compress=zstd", s3=s3, locations = locations)
-  )
-  
-  # If we have some of the most recent available day, we need only missing cycles
-} else if (start == avail_day) {
-  #need_cycles <- avail_cycles[!(avail_cycles %in% have_cycles)]
-  need_cycles <- avail_cycles
-  
-  if(length(need_cycles)==0){
-    message("Up to date.")
-  }else {
-    if("00" %in% need_cycles) {
-      full_dates <- start
-    }
-    cycles <- need_cycles[need_cycles != "00"]
-    cycle_dates <- start
-  }
-  
-  ## get 00 if it is missing:
-  map(full_dates, noaa_gefs, cycle="00", threads=threads, gdal_ops="-co compress=zstd", s3=s3, locations = locations)
-  ## get the non-00 cycles that are missing
-  map(cycles, 
-      function(cy) {
-        map(cycle_dates, noaa_gefs, cycle=cy, max_horizon = 6,
-            threads=threads, gdal_ops="-co compress=zstd", s3=s3, locations = locations)
-      })
-  
 }
+
+# if(start <= avail_day -1 ) {
+#   # If strictly more than a full day behind, get all records up to day before.
+#   full_dates <- seq(start, avail_day-1, by= "1 day")
+#   map(full_dates, noaa_gefs, cycle="00", threads=threads, gdal_ops="-co compress=zstd", s3=s3, locations = locations)
+#   map(cycles, 
+#       function(cy) {
+#         map(full_dates, noaa_gefs, cycle=cy, max_horizon = 6,
+#             threads=threads, gdal_ops="-co compress=zstd", s3=s3, locations = locations)
+#       })
+#   
+#   ## And also get available records for the current day:
+#   noaa_gefs(avail_day, cycle="00", threads=threads, gdal_ops="-co compress=zstd", s3=s3, locations = locations)
+#   map(avail_cycles, function(cy) 
+#     noaa_gefs(avail_day, cycle=cy, threads=threads, gdal_ops="-co compress=zstd", s3=s3, locations = locations)
+#   )
+#   
+#   # If we have some of the most recent available day, we need only missing cycles
+# } else if (start == avail_day) {
+#   #need_cycles <- avail_cycles[!(avail_cycles %in% have_cycles)]
+#   need_cycles <- avail_cycles
+#   
+#   if(length(need_cycles)==0){
+#     message("Up to date.")
+#   }else {
+#     if("00" %in% need_cycles) {
+#       full_dates <- start
+#     }
+#     cycles <- need_cycles[need_cycles != "00"]
+#     cycle_dates <- start
+#   }
+#   
+#   ## get 00 if it is missing:
+#   map(full_dates, noaa_gefs, cycle="00", threads=threads, gdal_ops="-co compress=zstd", s3=s3, locations = locations)
+#   ## get the non-00 cycles that are missing
+#   map(cycles, 
+#       function(cy) {
+#         map(cycle_dates, noaa_gefs, cycle=cy, max_horizon = 6,
+#             threads=threads, gdal_ops="-co compress=zstd", s3=s3, locations = locations)
+#       })
+#   
+# }
 
 print(paste0("End: ",Sys.time()))
 
