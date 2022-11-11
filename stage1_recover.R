@@ -24,7 +24,7 @@ s3 <- arrow::s3_bucket("drivers", endpoint_override = "s3.flare-forecast.org")
 threads <- 16
 download_all <- FALSE
 
-start <- as.Date("2022-11-02")
+start <- as.Date("2020-09-25")
 
 #NOTE: NEED TO REDO 2021-08-14, 2021-11-16
 
@@ -52,7 +52,7 @@ cycle_dates <- list()
 
 locations <- "site_list.csv"
 
-full_dates <- as.Date("2022-11-03")
+full_dates <-  as.Date(c("2021-07-22","2022-02-19","2022-04-12"))
 
 for(i in 1:length(full_dates)){
 

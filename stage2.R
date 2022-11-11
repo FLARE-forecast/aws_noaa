@@ -36,6 +36,8 @@ if(real_time_processing){
   dates <- as.character(seq(lubridate::as_date("2020-09-25"), lubridate::as_date("2022-10-30"), by = "1 day"))
 }
 
+dates <- as.character(lubridate::as_date("2021-03-03"))
+
 cycles <- 0
 
 available_dates <- df |> 

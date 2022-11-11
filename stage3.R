@@ -10,6 +10,7 @@ library(dplyr)
 library(ggplot2)
 library(gefs4cast)
 print(paste0("Start: ",Sys.time()))
+rebuild <- TRUE
 
 source(system.file("examples", "temporal_disaggregation.R", package = "gefs4cast"))
 
@@ -67,7 +68,7 @@ df <- arrow::open_dataset(stage1_local)
 purrr::walk(sites, function(site, df){
   message(site)
   message(Sys.time())
-  if(site %in% s3_stage3_parquet$ls()){
+  if(site %in% s3_stage3_parquet$ls() | rebuild){
     d <- arrow::open_dataset(s3_stage3_parquet$path(site)) %>% 
       mutate(start_date = lubridate::as_date(datetime)) |> 
       collect()
