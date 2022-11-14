@@ -50,10 +50,8 @@ cycle_dates <- list()
 
 locations <- "site_list.csv"
 
-s3 <- arrow::s3_bucket("drivers/noaa/gefs-v12/stage1/0", endpoint_override = "s3.flare-forecast.org")
-s3 <- arrow::open_dataset(s3, partitioning = "reference_date")
-
-d <- s3 %>% filter(variable == "TMP") %>% 
+s3_2 <- arrow::s3_bucket("drivers/noaa/gefs-v12/stage1/0", endpoint_override = "s3.flare-forecast.org")
+d <- arrow::open_dataset(s3_2, partitioning = "reference_date") %>% filter(variable == "TMP") %>% 
   group_by(reference_date, parameter) %>% 
   summarise(max = max(horizon)) %>% 
   collect()
@@ -65,16 +63,25 @@ missing_dates <- d %>%
 
 full_dates <-  unique(c(as.Date(missing_dates), avail_day))
 
+
+
 for(i in 1:length(full_dates)){
   
+  message(paste0("Downloading: ", full_dates))
+  print(paste0("S1: ",Sys.time()))
+  
   map(full_dates[i], noaa_gefs, cycle="00", threads=threads, s3=s3, locations = locations)
-  map(cycles, 
-      function(cy) {
-        map(full_dates[i], noaa_gefs, cycle=cy, max_horizon = 6,
-            threads=threads, s3=s3, gdal_ops="", locations = locations)
-      })
+  print(paste0("E1: ",Sys.time()))
 }
 
+print(paste0("S2: ",Sys.time()))
+yesterday <- full_dates[length(full_dates)] - lubridate::days(1) 
+map(cycles, 
+    function(cy) {
+      map(yesterday, noaa_gefs, cycle=cy, max_horizon = 6,
+          threads=threads, s3=s3, gdal_ops="", locations = locations)
+    })
+print(paste0("E2: ",Sys.time()))
 # if(start <= avail_day -1 ) {
 #   # If strictly more than a full day behind, get all records up to day before.
 #   full_dates <- seq(start, avail_day-1, by= "1 day")

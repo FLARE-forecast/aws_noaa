@@ -36,7 +36,7 @@ if(real_time_processing){
   dates <- as.character(seq(lubridate::as_date("2020-09-25"), lubridate::as_date("2022-10-30"), by = "1 day"))
 }
 
-dates <- as.character(lubridate::as_date("2021-03-03"))
+#dates <- as.character(lubridate::as_date("2021-03-03"))
 
 cycles <- 0
 
@@ -48,7 +48,7 @@ available_dates <- df |>
   dplyr::group_by(start_date, parameter) |> 
   dplyr::summarise(max_horizon = max(horizon)) |> 
   dplyr::summarise(max_horizon = min(max_horizon)) |> 
-  dplyr::filter(max_horizon == 840) |> 
+  #dplyr::filter(max_horizon >= 384) |> 
   dplyr::collect() |> 
   dplyr::pull(start_date)
 

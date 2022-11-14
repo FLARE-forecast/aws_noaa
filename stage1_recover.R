@@ -52,7 +52,7 @@ cycle_dates <- list()
 
 locations <- "site_list.csv"
 
-full_dates <-  as.Date(c("2021-07-22","2022-02-19","2022-04-12"))
+full_dates <-  as.Date(c("2022-11-12"))
 
 for(i in 1:length(full_dates)){
 

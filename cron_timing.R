@@ -31,3 +31,11 @@ cmd <- cronR::cron_rscript(rscript = file.path(home_dir, "stage3.R"),
                            workdir = file.path(home_dir),
                            trailing_arg = "curl -fsS -m 10 --retry 5 -o /dev/null https://hc-ping.com/6c3dec04-631a-4a8e-8c55-8837f2827e07")
 cronR::cron_add(command = cmd, frequency = '30 8 * * *', id = 'gefs4cast-stage3')
+
+cmd <- cronR::cron_rscript(rscript = file.path(home_dir, "combined_stages.R"),
+                           rscript_log = file.path(log_dir, "noaa_gefs.log"),
+                           log_append = FALSE,
+                           cmd = "/usr/local/bin/r", # use litter, more robust on CLI
+                           workdir = file.path(home_dir),
+                           trailing_arg = "curl -fsS -m 10 --retry 5 -o /dev/null https://hc-ping.com/6c3dec04-631a-4a8e-8c55-8837f2827e07")
+cronR::cron_add(command = cmd, frequency = '0 7 * * *', id = 'gefs4cast-stage3')
