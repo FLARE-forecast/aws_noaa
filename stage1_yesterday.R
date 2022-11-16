@@ -1,7 +1,7 @@
 #renv::restore()
 
 ## CRON-job to update the recent GEFS parquet files
-## Will pick up from the day after the last date on record
+## Will pick up yesterday and any missing days in the past
 
 # WARNING: needs >= GDAL 3.4.x
 #remotes::install_github("eco4cast/gefs4cast")
@@ -38,28 +38,26 @@ d <- arrow::open_dataset(s3_2, partitioning = "reference_date") %>% filter(varia
   collect()
 
 missing_dates <- d %>% 
-  filter(parameter < 31 & max < 840) %>% 
+  filter(parameter < 31 & max < 840 & reference_date < yesterday) %>% 
   distinct(reference_date) %>% 
   pull(reference_date)
 
 yesterday <- Sys.Date() - lubridate::days(1)
 
+full_dates <- c(yesterday, missing_dates)
+
+message(paste0("Start: ",Sys.time()))
+for(i in 1:length(full_dates)){
   
-  message(paste0("Downloading: ", yesterday))
-  print(paste0("S1: ",Sys.time()))
+  message(paste0("Downloading: ", full_dates[i]))
   
-  map(yesterday, noaa_gefs, cycle="00", threads=threads, s3=s3, locations = locations)
-  print(paste0("E1: ",Sys.time()))
-
-print(paste0("S2: ",Sys.time()))
-map(cycles, 
-    function(cy) {
-      map(yesterday, noaa_gefs, cycle=cy, max_horizon = 6,
-          threads=threads, s3=s3, gdal_ops="", locations = locations)
-    })
-print(paste0("E2: ",Sys.time()))
-
-
+  map(full_dates[i], noaa_gefs, cycle="00", threads=threads, s3=s3, locations = locations)
+  map(cycles, 
+      function(cy) {
+        map(full_dates[i], noaa_gefs, cycle=cy, max_horizon = 6,
+            threads=threads, s3=s3, gdal_ops="", locations = locations)
+      })
+}
 print(paste0("End: ",Sys.time()))
 
 

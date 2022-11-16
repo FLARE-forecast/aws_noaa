@@ -7,35 +7,24 @@ home_dir <-  path.expand("~/aws_noaa")
 log_dir <- path.expand("~/log/cron")
 fs::dir_create(log_dir)
 
-## GEFS arrow 
-cmd <- cronR::cron_rscript(rscript = file.path(home_dir, "stage1.R"),
-                           rscript_log = file.path(log_dir, "gefs4cast-snapshot.log"),
+## GEFS arrow
+#the 384 Horizon is finished at 6:30 AM UTC on same day
+#Note the Cron timing on the machine is UTC
+cmd <- cronR::cron_rscript(rscript = file.path(home_dir, "combined_stages.R"),
+                           rscript_log = file.path(log_dir, "noaa_gefs_today.log"),
+                           log_append = FALSE,
+                           cmd = "/usr/local/bin/r", # use litter, more robust on CLI
+                           workdir = file.path(home_dir),
+                           trailing_arg = "curl -fsS -m 10 --retry 5 -o /dev/null https://hc-ping.com/6c3dec04-631a-4a8e-8c55-8837f2827e07")
+cronR::cron_add(command = cmd, frequency = '0 7 * * *', id = 'noaa_gefs_today')
+
+#the 840 Horizon is finished at 3:05 AM UTC on next day
+#Note the Cron timing on the machine is UTC
+cmd <- cronR::cron_rscript(rscript = file.path(home_dir, "stage1_yesterday.R"),
+                           rscript_log = file.path(log_dir, "noaa_gefs_yesterday.log"),
                            log_append = FALSE,
                            cmd = "/usr/local/bin/r", # use litter, more robust on CLI
                            workdir = file.path(home_dir),
                            trailing_arg = "curl -fsS -m 10 --retry 5 -o /dev/null https://hc-ping.com/3c7408aa-070a-4985-a856-356606a297b7")
-cronR::cron_add(command = cmd, frequency = '0 */4 * * *', id = 'gefs4cast')
+cronR::cron_add(command = cmd, frequency = '0 4 * * *', id = 'noaa_gefs_yesterday')
 
-cmd <- cronR::cron_rscript(rscript = file.path(home_dir, "stage2.R"),
-                           rscript_log = file.path(log_dir, "gefs4cast_stage2.log"),
-                           log_append = FALSE,
-                           cmd = "/usr/local/bin/r", # use litter, more robust on CLI
-                           workdir = file.path(home_dir),
-                           trailing_arg = "curl -fsS -m 10 --retry 5 -o /dev/null https://hc-ping.com/c1d4a193-b174-44c6-85f9-38622f61f6d5")
-cronR::cron_add(command = cmd, frequency = '30 4 * * *', id = 'gefs4cast-stage2')
-
-cmd <- cronR::cron_rscript(rscript = file.path(home_dir, "stage3.R"),
-                           rscript_log = file.path(log_dir, "gefs4cast_stage3.log"),
-                           log_append = FALSE,
-                           cmd = "/usr/local/bin/r", # use litter, more robust on CLI
-                           workdir = file.path(home_dir),
-                           trailing_arg = "curl -fsS -m 10 --retry 5 -o /dev/null https://hc-ping.com/6c3dec04-631a-4a8e-8c55-8837f2827e07")
-cronR::cron_add(command = cmd, frequency = '30 8 * * *', id = 'gefs4cast-stage3')
-
-cmd <- cronR::cron_rscript(rscript = file.path(home_dir, "combined_stages.R"),
-                           rscript_log = file.path(log_dir, "noaa_gefs.log"),
-                           log_append = FALSE,
-                           cmd = "/usr/local/bin/r", # use litter, more robust on CLI
-                           workdir = file.path(home_dir),
-                           trailing_arg = "curl -fsS -m 10 --retry 5 -o /dev/null https://hc-ping.com/6c3dec04-631a-4a8e-8c55-8837f2827e07")
-cronR::cron_add(command = cmd, frequency = '0 7 * * *', id = 'gefs4cast-stage3')

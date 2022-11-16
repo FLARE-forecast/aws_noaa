@@ -45,14 +45,14 @@ df <- arrow::open_dataset(s3_stage1, partitioning = c("cycle","start_date"))
 sites <- df |> 
   dplyr::filter(start_date == "2020-09-25",
                 variable == "PRES") |> 
-  distinct(site_id) |> 
-  collect() |> 
-  pull(site_id)
+  dplyr::distinct(site_id) |> 
+  dplyr::collect() |> 
+  dplyr::pull(site_id)
 
 message("collecting stage 1")
 
 all_stage1 <- df |> 
-  filter(variable %in% c("PRES","TMP","RH","UGRD","VGRD","APCP","DSWRF","DLWRF"),
+  dplyr::filter(variable %in% c("PRES","TMP","RH","UGRD","VGRD","APCP","DSWRF","DLWRF"),
          horizon %in% c(0,3))
 message("writing stage 1")
 fs::dir_create(file.path(base_dir,"parquet"))
@@ -71,12 +71,12 @@ purrr::walk(sites, function(site, df){
   
   if(site %in% s3_stage3_parquet$ls()){
     d <- arrow::open_dataset(s3_stage3_parquet$path(site)) %>% 
-      mutate(start_date = lubridate::as_date(datetime)) |> 
-      collect()
+      dplyr::mutate(start_date = lubridate::as_date(datetime)) |> 
+      dplyr::collect()
     max_start_date <- max(d$start_date)
     d2 <- d %>% 
-      filter(start_date != max_start_date) |> 
-      select(-dplyr::any_of(c("start_date","horizon","forecast_valid")))
+      dplyr::filter(start_date != max_start_date) |> 
+      dplyr::select(-dplyr::any_of(c("start_date","horizon","forecast_valid")))
     
     date_range <- as.character(seq(max_start_date, Sys.Date(), by = "1 day"))
     do_run <- length(date_range) > 1
@@ -95,24 +95,24 @@ purrr::walk(sites, function(site, df){
   if(do_run){
     
     d1 <- df |> 
-      filter(start_date %in% date_range,
+      dplyr::filter(start_date %in% date_range,
              site_id == site) |> 
-      select(-c("start_date", "cycle")) |>
-      distinct() |> 
-      collect() |> 
+      dplyr::select(-c("start_date", "cycle")) |>
+      dplyr::distinct() |> 
+      dplyr::collect() |> 
       disaggregate_fluxes() |>  
       add_horizon0_time() |> 
       convert_precip2rate() |>
       convert_temp2kelvin() |> 
       convert_rh2proportion() |> 
-      filter(horizon < 6) |> 
-      mutate(reference_datetime = min(datetime)) |> 
+      dplyr::filter(horizon < 6) |> 
+      dplyr::mutate(reference_datetime = min(datetime)) |> 
       disaggregate2hourly() |>
       standardize_names_cf() |> 
       dplyr::bind_rows(d2) |>
-      mutate(reference_datetime = min(datetime)) |> 
+      dplyr::mutate(reference_datetime = min(datetime)) |> 
       #dplyr::select(time, start_time, site_id, longitude, latitude, ensemble, variable, height, predicted) |> 
-      arrange(site_id, datetime, variable, parameter)
+      dplyr::arrange(site_id, datetime, variable, parameter)
     
     #NEED TO UPDATE TO WRITE TO S3
     

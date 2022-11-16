@@ -14,6 +14,8 @@ library(tidyverse)
 readRenviron("~/.Renviron")
 print(paste0("Start: ",Sys.time()))
 
+locations <- "site_list.csv"
+
 # Set destination bucket
 Sys.unsetenv("AWS_DEFAULT_REGION")
 Sys.unsetenv("AWS_S3_ENDPOINT")
@@ -35,95 +37,24 @@ aws <- arrow::s3_bucket("noaa-gefs-pds", anonymous = TRUE)
 avail <- aws$ls()
 days <- as.Date(gsub("^gefs\\.(\\d{8})", "\\1", avail), "%Y%m%d")
 avail_day <- max(days,na.rm=TRUE)
-avail_cycles <- basename( aws$ls(avail[which.max(days)]) )
 
 # ick can detect folder before it has data!
 # hackish sanity check
-A <- aws$ls( paste(avail[which.max(days)], max(avail_cycles), "atmos", "pgrb2ap5", sep="/" ))
-B <- aws$ls( paste(avail[which.max(days)-1], max(avail_cycles), "atmos", "pgrb2ap5", sep="/" ))
-complete <- length(A) == length(B)
-if(!complete) avail_cycles <- avail_cycles[-length(avail_cycles)]
-
-cycles <- c("06", "12", "18")
-full_dates <- list()
-cycle_dates <- list()
-
-locations <- "site_list.csv"
-
-s3_2 <- arrow::s3_bucket("drivers/noaa/gefs-v12/stage1/0", endpoint_override = "s3.flare-forecast.org")
-d <- arrow::open_dataset(s3_2, partitioning = "reference_date") %>% filter(variable == "TMP") %>% 
-  group_by(reference_date, parameter) %>% 
-  summarise(max = max(horizon)) %>% 
-  collect()
-
-missing_dates <- d %>% 
-  filter(parameter < 31 & max < 840) %>% 
-  distinct(reference_date) %>% 
-  pull(reference_date)
-
-full_dates <-  unique(c(as.Date(missing_dates), avail_day))
-
-
-
-for(i in 1:length(full_dates)){
+A <- aws$ls( paste(avail[which.max(days)], "00", "atmos", "pgrb2ap5", sep="/" ))
+A <- A[stringr::str_detect(A, "f384")]
+if(length(A[stringr::str_detect(A, "gep")] == 60) & avail_day == Sys.Date()){
   
+  full_dates <-  Sys.Date()
+  
+  message(paste0("Start: ",Sys.time()))
   message(paste0("Downloading: ", full_dates))
-  print(paste0("S1: ",Sys.time()))
   
-  map(full_dates[i], noaa_gefs, cycle="00", threads=threads, s3=s3, locations = locations)
-  print(paste0("E1: ",Sys.time()))
+  map(full_dates, noaa_gefs, cycle="00", max_horizon = 384, threads=threads, s3=s3, locations = locations)
+  
+  print(paste0("End: ",Sys.time()))
 }
 
-print(paste0("S2: ",Sys.time()))
-yesterday <- full_dates[length(full_dates)] - lubridate::days(1) 
-map(cycles, 
-    function(cy) {
-      map(yesterday, noaa_gefs, cycle=cy, max_horizon = 6,
-          threads=threads, s3=s3, gdal_ops="", locations = locations)
-    })
-print(paste0("E2: ",Sys.time()))
-# if(start <= avail_day -1 ) {
-#   # If strictly more than a full day behind, get all records up to day before.
-#   full_dates <- seq(start, avail_day-1, by= "1 day")
-#   map(full_dates, noaa_gefs, cycle="00", threads=threads, gdal_ops="-co compress=zstd", s3=s3, locations = locations)
-#   map(cycles, 
-#       function(cy) {
-#         map(full_dates, noaa_gefs, cycle=cy, max_horizon = 6,
-#             threads=threads, gdal_ops="-co compress=zstd", s3=s3, locations = locations)
-#       })
-#   
-#   ## And also get available records for the current day:
-#   noaa_gefs(avail_day, cycle="00", threads=threads, gdal_ops="-co compress=zstd", s3=s3, locations = locations)
-#   map(avail_cycles, function(cy) 
-#     noaa_gefs(avail_day, cycle=cy, threads=threads, gdal_ops="-co compress=zstd", s3=s3, locations = locations)
-#   )
-#   
-#   # If we have some of the most recent available day, we need only missing cycles
-# } else if (start == avail_day) {
-#   #need_cycles <- avail_cycles[!(avail_cycles %in% have_cycles)]
-#   need_cycles <- avail_cycles
-#   
-#   if(length(need_cycles)==0){
-#     message("Up to date.")
-#   }else {
-#     if("00" %in% need_cycles) {
-#       full_dates <- start
-#     }
-#     cycles <- need_cycles[need_cycles != "00"]
-#     cycle_dates <- start
-#   }
-#   
-#   ## get 00 if it is missing:
-#   map(full_dates, noaa_gefs, cycle="00", threads=threads, gdal_ops="-co compress=zstd", s3=s3, locations = locations)
-#   ## get the non-00 cycles that are missing
-#   map(cycles, 
-#       function(cy) {
-#         map(cycle_dates, noaa_gefs, cycle=cy, max_horizon = 6,
-#             threads=threads, gdal_ops="-co compress=zstd", s3=s3, locations = locations)
-#       })
-#   
-# }
 
-print(paste0("End: ",Sys.time()))
+
 
 
