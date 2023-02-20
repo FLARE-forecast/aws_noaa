@@ -1,4 +1,6 @@
 #renv::restore()
+source("ignore_sigpipe.R")
+ignore_sigpipe()
 
 ## CRON-job to update the recent GEFS parquet files
 ## Will pick up from the day after the last date on record
@@ -32,31 +34,17 @@ s3$CreateDir("noaa/gefs-v12/stage1/0")
 s3$CreateDir("noaa/gefs-v12/stage1/18")
 gefs <- s3$path("noaa/gefs-v12/stage1/0")
 gefs18 <- s3$path("noaa/gefs-v12/stage1/18")
-have0 <- gefs$ls()
-have18 <- gefs18$ls()
-full_dates <- seq(start, Sys.Date(), by= "1 day")
-include_dates <- rep(TRUE, length(full_dates))
-if((length(have0) > 0 & length(have0) > 18) & !download_all){
-  have_days <- as.Date(basename(have0))
-  for(j in 1:length(full_dates)){
-    if(full_dates[j] %in% have_days){
-      include_dates[j] <- FALSE
-    }
-  }
-  full_dates <- full_dates[include_dates]
-}
-
 
 cycles <- c("06", "12", "18")
-cycle_dates <- list()
-
 locations <- "site_list.csv"
+full_dates <-   as.Date(seq(start, as.Date("2020-12-31"), by = "1 day"))
 
-full_dates <-  as.Date(c("2022-11-12"))
+full_dates <- as.Date("2023-02-18")
 
 for(i in 1:length(full_dates)){
 
 map(full_dates[i], noaa_gefs, cycle="00", threads=threads, s3=s3, locations = locations)
+    #name_pattern = "noaa/gefs-v12/stage1/{cycle_int}/{nice_date}/part-0.parquet")
 map(cycles, 
     function(cy) {
       map(full_dates[i], noaa_gefs, cycle=cy, max_horizon = 6,

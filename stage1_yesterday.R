@@ -1,5 +1,8 @@
 #renv::restore()
 
+source("ignore_sigpipe.R")
+ignore_sigpipe()
+
 ## CRON-job to update the recent GEFS parquet files
 ## Will pick up yesterday and any missing days in the past
 
@@ -11,7 +14,7 @@ library(dplyr)
 library(tidyverse)
 
 # be littler-compatible
-readRenviron("~/.Renviron")
+#readRenviron("~/.Renviron")
 print(paste0("Start: ",Sys.time()))
 
 # Set destination bucket
@@ -37,12 +40,12 @@ d <- arrow::open_dataset(s3_2, partitioning = "reference_date") %>% filter(varia
   summarise(max = max(horizon)) %>% 
   collect()
 
+yesterday <- Sys.Date() - lubridate::days(1)
+
 missing_dates <- d %>% 
   filter(parameter < 31 & max < 840 & reference_date < yesterday) %>% 
   distinct(reference_date) %>% 
   pull(reference_date)
-
-yesterday <- Sys.Date() - lubridate::days(1)
 
 full_dates <- c(yesterday, missing_dates)
 

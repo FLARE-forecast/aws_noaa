@@ -1,3 +1,5 @@
+source("ignore_sigpipe.R")
+ignore_sigpipe()
 
 message("Running Stage 1")
 source("stage1.R")
