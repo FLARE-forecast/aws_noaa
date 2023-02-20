@@ -28,6 +28,7 @@ s3_stage2$CreateDir("stage2/parquet")
 s3_stage2_parquet <- arrow::s3_bucket("drivers/noaa/gefs-v12/stage2/parquet", 
                                       endpoint_override =  "s3.flare-forecast.org")
 
+#df <- arrow::open_dataset(s3_stage1, partitioning = c("cycle", "start_date", "site_id"))
 df <- arrow::open_dataset(s3_stage1, partitioning = c("cycle", "start_date"))
 
 if(real_time_processing){
@@ -36,7 +37,7 @@ if(real_time_processing){
   dates <- as.character(seq(lubridate::as_date("2020-09-25"), lubridate::as_date("2022-10-30"), by = "1 day"))
 }
 
-#dates <- as.character(lubridate::as_date("2021-03-03"))
+#dates <- as.character(as.Date(c("2023-02-18")))
 
 cycles <- 0
 
@@ -54,8 +55,8 @@ available_dates <- df |>
 
 
 if(length(s3_stage2_parquet$ls()) > 0){
-  df2 <- arrow::open_dataset(s3_stage2_parquet, partitioning = c("cycle","start_date"))
-  
+  #df2 <- arrow::open_dataset(s3_stage2_parquet, partitioning = c("cycle","start_date", "site_id"))
+  df2 <- arrow::open_dataset(s3_stage2_parquet, partitioning = c("cycle","start_date"))  
   max_horizon_date <- df2 |> 
     dplyr::filter(start_date %in% dates,
                   cycle == 0,
@@ -135,10 +136,18 @@ if(nrow(forecast_start_times) > 0){
                   standardize_names_cf() |> 
                   correct_solar_geom()
                 
-                fname <- "part-0.parquet"
+                #sites <- unique(d1$site_id)
+                #path <- glue::glue(name_pattern)
+                arrow::write_parquet(d1, sink = s3_stage2_parquet$path(file.path(forecast_start_times$dir_parquet[i],"part-0.parquet")))
                 
-                arrow::write_parquet(d1, sink = s3_stage2_parquet$path(file.path(forecast_start_times$dir_parquet[i],fname)))
-                
+                #purrr::walk(sites, function(site,d1){
+                #  site_id <- site
+                #  path <- glue::glue(name_pattern)
+                #  outfile <- s3$path(path)
+                #  d1 |> filter(site_id == site) |>
+                #    arrow::write_parquet(sink = s3_stage2_parquet$path(file.path(forecast_start_times$dir_parquet[i],site_id,"part-0.parquet")))
+                #},
+                #d1)
               },
               df = df,
               forecast_start_times= forecast_start_times
