@@ -1,5 +1,5 @@
 #renv::restore()
-source("ignore_sigpipe.R")
+source("ignore_sigpipes.R")
 ignore_sigpipe()
 
 ## CRON-job to update the recent GEFS parquet files
