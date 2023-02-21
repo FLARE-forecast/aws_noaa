@@ -30,25 +30,26 @@ start <- as.Date("2020-09-25")
 
 #NOTE: NEED TO REDO 2021-08-14, 2021-11-16
 
-s3$CreateDir("noaa/gefs-v12/stage1/0")
-s3$CreateDir("noaa/gefs-v12/stage1/18")
-gefs <- s3$path("noaa/gefs-v12/stage1/0")
-gefs18 <- s3$path("noaa/gefs-v12/stage1/18")
+s3$CreateDir("noaa/gefs-v12-reprocess/stage1/0")
+s3$CreateDir("noaa/gefs-v12-reprocess/stage1/18")
+gefs <- s3$path("noaa/gefs-v12-reprocess/stage1/0")
+gefs18 <- s3$path("noaa/gefs-v12-reprocess/stage1/18")
 
 cycles <- c("06", "12", "18")
-locations <- "site_list.csv"
+locations <- "site_list_v2.csv"
 full_dates <-   as.Date(seq(start, as.Date("2020-12-31"), by = "1 day"))
 
-full_dates <- as.Date("2023-02-18")
+#full_dates <- as.Date("2023-02-18")
 
 for(i in 1:length(full_dates)){
 
-map(full_dates[i], noaa_gefs, cycle="00", threads=threads, s3=s3, locations = locations)
-    #name_pattern = "noaa/gefs-v12/stage1/{cycle_int}/{nice_date}/part-0.parquet")
+map(full_dates[i], noaa_gefs, cycle="00", threads=threads, s3=s3, locations = locations,
+    name_pattern = "noaa/gefs-v12/stage1/{cycle_int}/{nice_date}/{site_id}/part-0.parquet")
 map(cycles, 
     function(cy) {
       map(full_dates[i], noaa_gefs, cycle=cy, max_horizon = 6,
-          threads=threads, s3=s3, gdal_ops="", locations = locations)
+          threads=threads, s3=s3, gdal_ops="", locations = locations,
+          name_pattern = "noaa/gefs-v12/stage1/{cycle_int}/{nice_date}/{site_id}/part-0.parquet")
     })
 }
 
