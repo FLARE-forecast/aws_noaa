@@ -26,7 +26,9 @@ s3 <- arrow::s3_bucket("drivers", endpoint_override = "s3.flare-forecast.org")
 threads <- 16
 download_all <- FALSE
 
-start <- as.Date("2020-09-25")
+#start <- as.Date("2020-09-25")
+
+start <- as.Date("2023-03-06")
 
 #NOTE: NEED TO REDO 2021-08-14, 2021-11-16
 
@@ -37,19 +39,21 @@ gefs18 <- s3$path("noaa/gefs-v12-reprocess/stage1/18")
 
 cycles <- c("06", "12", "18")
 locations <- "site_list_v2.csv"
-full_dates <-   as.Date(seq(start, as.Date("2020-12-31"), by = "1 day"))
+full_dates <-   as.Date(seq(start, as.Date("2023-03-10"), by = "1 day"))
 
-#full_dates <- as.Date("2023-02-18")
+full_dates <- as.Date(c("2021-01-09","2023-02-21"))
 
 for(i in 1:length(full_dates)){
 
 map(full_dates[i], noaa_gefs, cycle="00", threads=threads, s3=s3, locations = locations,
-    name_pattern = "noaa/gefs-v12/stage1/{cycle_int}/{nice_date}/{site_id}/part-0.parquet")
+    name_pattern = "noaa/gefs-v12-reprocess/stage1/{cycle_int}/{nice_date}/{site_id}/part-0.parquet")
 map(cycles, 
     function(cy) {
       map(full_dates[i], noaa_gefs, cycle=cy, max_horizon = 6,
           threads=threads, s3=s3, gdal_ops="", locations = locations,
-          name_pattern = "noaa/gefs-v12/stage1/{cycle_int}/{nice_date}/{site_id}/part-0.parquet")
+          name_pattern = "noaa/gefs-v12-reprocess/stage1/{cycle_int}/{nice_date}/{site_id}/part-0.parquet")
     })
+
+RCurl::url.exists("https://hc-ping.com/66e99d0a-8dbb-43df-b066-39d7f7b01af3", timeout = 5)
 }
 
