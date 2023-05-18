@@ -14,7 +14,7 @@ library(tidyverse)
 readRenviron("~/.Renviron")
 print(paste0("Start: ",Sys.time()))
 
-locations <- "site_list.csv"
+locations <- "site_list_v2.csv"
 
 # Set destination bucket
 Sys.unsetenv("AWS_DEFAULT_REGION")
@@ -26,7 +26,7 @@ s3 <- arrow::s3_bucket("drivers", endpoint_override = "s3.flare-forecast.org")
 # Adjust threads between 70 - 1120 depending on available RAM, CPU, + bandwidth
 threads <- 4
 
-gefs <- s3$path("noaa/gefs-v12/stage1/0")
+gefs <- s3$path("noaa/gefs-v12-reprocess/stage1/0")
 have <- gefs$ls()
 have_days <- as.Date(basename(have))
 start <- max(have_days, na.rm=TRUE)
@@ -49,12 +49,8 @@ if(length(A[stringr::str_detect(A, "gep")] == 60) & avail_day == Sys.Date()){
   message(paste0("Start: ",Sys.time()))
   message(paste0("Downloading: ", full_dates))
   
-  map(full_dates, noaa_gefs, cycle="00", max_horizon = 384, threads=threads, s3=s3, locations = locations)
+  map(full_dates, noaa_gefs, cycle="00", max_horizon = 384, threads=threads, s3=s3, locations = locations,
+      name_pattern = "noaa/gefs-v12-reprocess/stage1/{cycle_int}/{nice_date}/{site_id}/part-0.parquet")
   
   print(paste0("End: ",Sys.time()))
 }
-
-
-
-
-
