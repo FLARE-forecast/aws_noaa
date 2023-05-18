@@ -1,6 +1,6 @@
 #renv::restore()
 
-source("ignore_sigpipe.R")
+source("ignore_sigpipes.R")
 ignore_sigpipe()
 
 ## CRON-job to update the recent GEFS parquet files
@@ -32,9 +32,9 @@ cycles <- c("06", "12", "18")
 full_dates <- list()
 cycle_dates <- list()
 
-locations <- "site_list.csv"
+locations <- "site_list_v2.csv"
 
-s3_2 <- arrow::s3_bucket("drivers/noaa/gefs-v12/stage1/0", endpoint_override = "s3.flare-forecast.org")
+s3_2 <- arrow::s3_bucket("drivers/noaa/gefs-v12-reprocess/stage1/0", endpoint_override = "s3.flare-forecast.org")
 d <- arrow::open_dataset(s3_2, partitioning = "reference_date") %>% filter(variable == "TMP") %>% 
   group_by(reference_date, parameter) %>% 
   summarise(max = max(horizon)) %>% 
@@ -54,13 +54,13 @@ for(i in 1:length(full_dates)){
   
   message(paste0("Downloading: ", full_dates[i]))
   
-  map(full_dates[i], noaa_gefs, cycle="00", threads=threads, s3=s3, locations = locations)
+  map(full_dates[i], noaa_gefs, cycle="00", threads=threads, s3=s3, locations = locations,
+      name_pattern = "noaa/gefs-v12-reprocess/stage1/{cycle_int}/{nice_date}/{site_id}/part-0.parquet")
   map(cycles, 
       function(cy) {
         map(full_dates[i], noaa_gefs, cycle=cy, max_horizon = 6,
-            threads=threads, s3=s3, gdal_ops="", locations = locations)
+            threads=threads, s3=s3, gdal_ops="", locations = locations,
+            name_pattern = "noaa/gefs-v12-reprocess/stage1/{cycle_int}/{nice_date}/{site_id}/part-0.parquet")
       })
 }
 print(paste0("End: ",Sys.time()))
-
-
