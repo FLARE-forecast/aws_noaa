@@ -19,13 +19,13 @@ write_s3 <- TRUE
 reprocess_all <- FALSE
 real_time_processing <- FALSE
 
-s3_stage1 <- arrow::s3_bucket("drivers/noaa/gefs-v12-process/stage1", 
+s3_stage1 <- arrow::s3_bucket("drivers/noaa/gefs-v12-reprocess/stage1", 
                               endpoint_override =  "s3.flare-forecast.org",
                               anonymous=TRUE)
-s3_stage2 <- arrow::s3_bucket("drivers/noaa/gefs-v12-process", 
+s3_stage2 <- arrow::s3_bucket("drivers/noaa/gefs-v12-reprocess", 
                               endpoint_override =  "s3.flare-forecast.org")
 s3_stage2$CreateDir("stage2/parquet")
-s3_stage2_parquet <- arrow::s3_bucket("drivers/noaa/gefs-v12-process/stage2/parquet", 
+s3_stage2_parquet <- arrow::s3_bucket("drivers/noaa/gefs-v12-reprocess/stage2/parquet", 
                                       endpoint_override =  "s3.flare-forecast.org")
 
 df <- arrow::open_dataset(s3_stage1, partitioning = c("cycle", "start_date", "site_id"))
