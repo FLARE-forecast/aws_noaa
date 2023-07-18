@@ -54,8 +54,3 @@ if(length(A[stringr::str_detect(A, "gep")] == 60) & avail_day == Sys.Date()){
   
   print(paste0("End: ",Sys.time()))
 }
-
-
-
-
-

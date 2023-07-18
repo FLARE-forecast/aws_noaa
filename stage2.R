@@ -37,8 +37,6 @@ if(real_time_processing){
   dates <- as.character(seq(lubridate::as_date("2020-09-25"), lubridate::as_date("2023-03-06"), by = "1 day"))
 }
 
-#dates <- as.character(seq(lubridate::as_date("2023-06-30"), lubridate::as_date("2023-07-04"), by = "1 day"))
-
 
 cycles <- 0
 

@@ -64,5 +64,3 @@ for(i in 1:length(full_dates)){
       })
 }
 print(paste0("End: ",Sys.time()))
-
-
