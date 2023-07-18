@@ -12,9 +12,9 @@ fs::dir_create(log_dir)
 cmd <- cronR::cron_rscript(rscript = file.path(home_dir, "stage1_yesterday.R"),
                            rscript_log = file.path(log_dir, "noaa_gefs_yesterday.log"),
                            log_append = FALSE,
-                           cmd = "/usr/local/bin/r", # use litter, more robust on CLI
-                           workdir = file.path(home_dir),
-                           trailing_arg = "curl -fsS -m 10 --retry 5 -o /dev/null https://hc-ping.com/3c7408aa-070a-4985-a856-356606a297b7")
+                           #cmd = "/usr/local/bin/r", # use litter, more robust on CLI
+                           workdir = file.path(home_dir))
+                           #trailing_arg = "curl -fsS -m 10 --retry 5 -o /dev/null https://hc-ping.com/3c7408aa-070a-4985-a856-356606a297b7")
 cronR::cron_add(command = cmd, frequency = '0 4 * * *', id = 'noaa_gefs_yesterday')
 
 #3 hours is enough time for yesterday to finish downloading before downloading today
@@ -25,9 +25,9 @@ cronR::cron_add(command = cmd, frequency = '0 4 * * *', id = 'noaa_gefs_yesterda
 cmd <- cronR::cron_rscript(rscript = file.path(home_dir, "combined_stages_today.R"),
                            rscript_log = file.path(log_dir, "noaa_gefs_today.log"),
                            log_append = FALSE,
-                           cmd = "/usr/local/bin/r", # use litter, more robust on CLI
-                           workdir = file.path(home_dir),
-                           trailing_arg = "curl -fsS -m 10 --retry 5 -o /dev/null https://hc-ping.com/6c3dec04-631a-4a8e-8c55-8837f2827e07")
+                           #cmd = "/usr/local/bin/r", # use litter, more robust on CLI
+                           workdir = file.path(home_dir))
+                           #trailing_arg = "curl -fsS -m 10 --retry 5 -o /dev/null https://hc-ping.com/6c3dec04-631a-4a8e-8c55-8837f2827e07")
 cronR::cron_add(command = cmd, frequency = '0 7 * * *', id = 'noaa_gefs_today')
 
 

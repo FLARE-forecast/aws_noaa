@@ -14,7 +14,7 @@ rebuild <- FALSE
 
 source(system.file("examples", "temporal_disaggregation.R", package = "gefs4cast"))
 
-base_dir <- path.expand("~/test_processing/noaa/gefs-v12/stage1")
+base_dir <- path.expand("~/test_processing/noaa/gefs-v12-reprocess/stage1")
 generate_netcdf <- FALSE
 
 Sys.unsetenv("AWS_DEFAULT_REGION")
@@ -23,22 +23,22 @@ Sys.setenv(AWS_EC2_METADATA_DISABLED="TRUE")
 
 message("reading stage 1")
 
-s3_stage1 <- arrow::s3_bucket("drivers/noaa/gefs-v12/stage1", 
+s3_stage1 <- arrow::s3_bucket("drivers/noaa/gefs-v12-reprocess/stage1", 
                               endpoint_override =  "s3.flare-forecast.org",
                               anonymous=TRUE)
 
 message("reading stage 3")
 
-s3_stage3 <- arrow::s3_bucket("drivers/noaa/gefs-v12/", 
+s3_stage3 <- arrow::s3_bucket("drivers/noaa/gefs-v12-reprocess/", 
                               endpoint_override =  "s3.flare-forecast.org")
 s3_stage3$CreateDir("stage3/parquet")
 
-s3_stage3_parquet <- arrow::s3_bucket("drivers/noaa/gefs-v12/stage3/parquet", 
+s3_stage3_parquet <- arrow::s3_bucket("drivers/noaa/gefs-v12-reprocess/stage3/parquet", 
                                       endpoint_override =  "s3.flare-forecast.org")
 
 message("opening stage 1")
 
-df <- arrow::open_dataset(s3_stage1, partitioning = c("cycle","start_date"))
+df <- arrow::open_dataset(s3_stage1, partitioning = c("cycle","start_date","site_id"))
 
 
 

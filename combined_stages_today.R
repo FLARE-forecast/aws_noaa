@@ -1,4 +1,4 @@
-source("ignore_sigpipe.R")
+source("ignore_sigpipes.R")
 ignore_sigpipe()
 
 message("Running Stage 1")
@@ -16,8 +16,8 @@ Sys.unsetenv("AWS_S3_ENDPOINT")
 Sys.setenv(AWS_EC2_METADATA_DISABLED="TRUE")
 
 message("Check Stage 1 cycle 0")
-s3_2 <- arrow::s3_bucket("drivers/noaa/gefs-v12/stage1/0", endpoint_override = "s3.flare-forecast.org")
-d1 <- arrow::open_dataset(s3_2, partitioning = "reference_date") |>  
+s3_2 <- arrow::s3_bucket("drivers/noaa/gefs-v12-reprocess/stage1/0", endpoint_override = "s3.flare-forecast.org")
+d1 <- arrow::open_dataset(s3_2, partitioning = c("reference_date", "site_id")) |>  
   dplyr::filter(variable == "TMP") |>  
   dplyr::group_by(reference_date, parameter) |>   
   dplyr::summarise(max = max(horizon)) |> 
@@ -35,8 +35,8 @@ message("Check Stage 1 cycle 6,12,18")
 
 dates <- as.character(c(lubridate::as_date(max_date), lubridate::as_date(max_date) - lubridate::days(1)))
 
-s3_2 <- arrow::s3_bucket("drivers/noaa/gefs-v12/stage1", endpoint_override = "s3.flare-forecast.org")
-arrow::open_dataset(s3_2, partitioning = c("cycle","reference_date")) |>  
+s3_2 <- arrow::s3_bucket("drivers/noaa/gefs-v12-reprocess/stage1", endpoint_override = "s3.flare-forecast.org")
+arrow::open_dataset(s3_2, partitioning = c("cycle","reference_date", "site_id")) |>  
   dplyr::filter(variable == "TMP") |>  
   dplyr::filter(cycle %in% c(6,12,18), site_id == "fcre", reference_date %in% dates, parameter == 1) |> 
   dplyr::select(reference_date, cycle, horizon, reference_datetime, datetime) |>  
@@ -46,8 +46,8 @@ arrow::open_dataset(s3_2, partitioning = c("cycle","reference_date")) |>
 
 message("Check Stage 2")
 
-s3_2 <- arrow::s3_bucket("drivers/noaa/gefs-v12/stage2/parquet/0", endpoint_override = "s3.flare-forecast.org")
-arrow::open_dataset(s3_2, partitioning = "reference_date") |>  
+s3_2 <- arrow::s3_bucket("drivers/noaa/gefs-v12-reprocess/stage2/parquet/0", endpoint_override = "s3.flare-forecast.org")
+arrow::open_dataset(s3_2, partitioning = c("reference_date","site_id")) |>  
   dplyr::filter(variable == "air_temperature") |> 
   dplyr::group_by(reference_date, parameter) |>  
   dplyr::summarise(max = max(horizon)) |>  
@@ -57,7 +57,7 @@ arrow::open_dataset(s3_2, partitioning = "reference_date") |>
 
 message("Check Stage 3")
 
-s3_2 <- arrow::s3_bucket("drivers/noaa/gefs-v12/stage3/parquet/fcre", endpoint_override = "s3.flare-forecast.org")
+s3_2 <- arrow::s3_bucket("drivers/noaa/gefs-v12-reprocess/stage3/parquet/fcre", endpoint_override = "s3.flare-forecast.org")
 arrow::open_dataset(s3_2) |> 
   dplyr::filter(variable == "air_temperature") |> 
   dplyr::collect() |> 

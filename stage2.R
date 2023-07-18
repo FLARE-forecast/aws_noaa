@@ -19,25 +19,26 @@ write_s3 <- TRUE
 reprocess_all <- FALSE
 real_time_processing <- TRUE
 
-s3_stage1 <- arrow::s3_bucket("drivers/noaa/gefs-v12/stage1", 
+s3_stage1 <- arrow::s3_bucket("drivers/noaa/gefs-v12-reprocess/stage1", 
                               endpoint_override =  "s3.flare-forecast.org",
                               anonymous=TRUE)
-s3_stage2 <- arrow::s3_bucket("drivers/noaa/gefs-v12", 
+s3_stage2 <- arrow::s3_bucket("drivers/noaa/gefs-v12-reprocess", 
                               endpoint_override =  "s3.flare-forecast.org")
 s3_stage2$CreateDir("stage2/parquet")
-s3_stage2_parquet <- arrow::s3_bucket("drivers/noaa/gefs-v12/stage2/parquet", 
+s3_stage2_parquet <- arrow::s3_bucket("drivers/noaa/gefs-v12-reprocess/stage2/parquet", 
                                       endpoint_override =  "s3.flare-forecast.org")
 
-#df <- arrow::open_dataset(s3_stage1, partitioning = c("cycle", "start_date", "site_id"))
-df <- arrow::open_dataset(s3_stage1, partitioning = c("cycle", "start_date"))
+df <- arrow::open_dataset(s3_stage1, partitioning = c("cycle", "start_date", "site_id"))
+#df <- arrow::open_dataset(s3_stage1, partitioning = c("cycle", "start_date"))
 
 if(real_time_processing){
   dates <- as.character(seq(Sys.Date() - lubridate::days(6), Sys.Date(), by = "1 day"))
 }else{
-  dates <- as.character(seq(lubridate::as_date("2020-09-25"), lubridate::as_date("2022-10-30"), by = "1 day"))
+  dates <- as.character(seq(lubridate::as_date("2020-09-25"), lubridate::as_date("2023-03-06"), by = "1 day"))
 }
 
-#dates <- as.character(as.Date(c("2023-02-18")))
+#dates <- as.character(seq(lubridate::as_date("2023-06-30"), lubridate::as_date("2023-07-04"), by = "1 day"))
+
 
 cycles <- 0
 
@@ -55,8 +56,8 @@ available_dates <- df |>
 
 
 if(length(s3_stage2_parquet$ls()) > 0){
-  #df2 <- arrow::open_dataset(s3_stage2_parquet, partitioning = c("cycle","start_date", "site_id"))
-  df2 <- arrow::open_dataset(s3_stage2_parquet, partitioning = c("cycle","start_date"))  
+  df2 <- arrow::open_dataset(s3_stage2_parquet, partitioning = c("cycle","start_date", "site_id"))
+  #df2 <- arrow::open_dataset(s3_stage2_parquet, partitioning = c("cycle","start_date"))  
   max_horizon_date <- df2 |> 
     dplyr::filter(start_date %in% dates,
                   cycle == 0,
@@ -136,22 +137,23 @@ if(nrow(forecast_start_times) > 0){
                   standardize_names_cf() |> 
                   correct_solar_geom()
                 
-                #sites <- unique(d1$site_id)
+                sites <- unique(d1$site_id)
                 #path <- glue::glue(name_pattern)
-                arrow::write_parquet(d1, sink = s3_stage2_parquet$path(file.path(forecast_start_times$dir_parquet[i],"part-0.parquet")))
+                #arrow::write_parquet(d1, sink = s3_stage2_parquet$path(file.path(forecast_start_times$dir_parquet[i],"part-0.parquet")))
                 
-                #purrr::walk(sites, function(site,d1){
-                #  site_id <- site
-                #  path <- glue::glue(name_pattern)
-                #  outfile <- s3$path(path)
-                #  d1 |> filter(site_id == site) |>
-                #    arrow::write_parquet(sink = s3_stage2_parquet$path(file.path(forecast_start_times$dir_parquet[i],site_id,"part-0.parquet")))
-                #},
-                #d1)
+                purrr::walk(sites, function(site,d1){
+                  site_id <- site
+                  d1 |> filter(site_id == site) |>
+                    arrow::write_parquet(sink = s3_stage2_parquet$path(file.path(forecast_start_times$dir_parquet[i],site_id,"part-0.parquet")))
+                },
+                d1)
+                
+                #RCurl::url.exists("https://hc-ping.com/66e99d0a-8dbb-43df-b066-39d7f7b01af3", timeout = 5)
+                
               },
               df = df,
-              forecast_start_times= forecast_start_times
-  )
+              forecast_start_times= forecast_start_times)
+  
 }else{
   message("no updates to process")
 }
