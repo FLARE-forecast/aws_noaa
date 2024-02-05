@@ -64,3 +64,5 @@ for(i in 1:length(full_dates)){
       })
 }
 print(paste0("End: ",Sys.time()))
+
+RCurl::url.exists("https://hc-ping.com/3c7408aa-070a-4985-a856-356606a297b7", timeout = 5)

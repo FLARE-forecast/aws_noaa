@@ -1,7 +1,4 @@
 readRenviron("~/.Renviron") # MUST come first
-#source(".Rprofile") # littler won't read this automatically, so renv won't work
-#renv::restore()
-
 
 library(neonstore)
 library(score4cast)
@@ -43,7 +40,7 @@ df <- arrow::open_dataset(s3_stage1, partitioning = c("cycle","start_date","site
 
 
 sites <- df |> 
-  dplyr::filter(start_date == "2020-09-25",
+  dplyr::filter(start_date == "2023-07-17",
                 variable == "PRES") |> 
   dplyr::distinct(site_id) |> 
   dplyr::collect() |> 

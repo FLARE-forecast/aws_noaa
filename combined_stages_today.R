@@ -65,3 +65,6 @@ arrow::open_dataset(s3_2) |>
   dplyr::select(datetime) |> 
   dplyr::arrange(desc(datetime)) |> 
   print(n = 48)
+
+RCurl::url.exists("https://hc-ping.com/6c3dec04-631a-4a8e-8c55-8837f2827e07", timeout = 5)
+
