@@ -20,18 +20,18 @@ Sys.setenv(AWS_EC2_METADATA_DISABLED="TRUE")
 
 message("reading stage 1")
 
-s3_stage1 <- arrow::s3_bucket("drivers/noaa/gefs-v12-reprocess/stage1", 
-                              endpoint_override =  "s3.flare-forecast.org",
+s3_stage1 <- arrow::s3_bucket("bio230121-bucket01/vt_backup/drivers/noaa/gefs-v12-reprocess/stage1", 
+                              endpoint_override =  "renc.osn.xsede.org",
                               anonymous=TRUE)
 
 message("reading stage 3")
 
-s3_stage3 <- arrow::s3_bucket("drivers/noaa/gefs-v12-reprocess/", 
-                              endpoint_override =  "s3.flare-forecast.org")
+s3_stage3 <- arrow::s3_bucket("bio230121-bucket01/vt_backup/drivers/noaa/gefs-v12-reprocess/", 
+                              endpoint_override =  "renc.osn.xsede.org")
 s3_stage3$CreateDir("stage3/parquet")
 
-s3_stage3_parquet <- arrow::s3_bucket("drivers/noaa/gefs-v12-reprocess/stage3/parquet", 
-                                      endpoint_override =  "s3.flare-forecast.org")
+s3_stage3_parquet <- arrow::s3_bucket("bio230121-bucket01/vt_backup/drivers/noaa/gefs-v12-reprocess/stage3/parquet", 
+                                      endpoint_override =  "renc.osn.xsede.org")
 
 message("opening stage 1")
 

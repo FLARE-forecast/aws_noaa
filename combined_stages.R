@@ -14,7 +14,7 @@ Sys.unsetenv("AWS_S3_ENDPOINT")
 Sys.setenv(AWS_EC2_METADATA_DISABLED="TRUE")
 
 message("Check Stage 1 cycle 0")
-s3_2 <- arrow::s3_bucket("drivers/noaa/gefs-v12/stage1/0", endpoint_override = "s3.flare-forecast.org")
+s3_2 <- arrow::s3_bucket("bio230121-bucket01/vt_backup/drivers/noaa/gefs-v12/stage1/0", endpoint_override = "renc.osn.xsede.org")
 d1 <- arrow::open_dataset(s3_2, partitioning = "reference_date") |>  
   dplyr::filter(variable == "TMP") |>  
   dplyr::group_by(reference_date, parameter) |>   
@@ -33,7 +33,7 @@ message("Check Stage 1 cycle 6,12,18")
 
 dates <- as.character(c(lubridate::as_date(max_date), lubridate::as_date(max_date) - lubridate::days(1)))
 
-s3_2 <- arrow::s3_bucket("drivers/noaa/gefs-v12/stage1", endpoint_override = "s3.flare-forecast.org")
+s3_2 <- arrow::s3_bucket("bio230121-bucket01/vt_backup/drivers/noaa/gefs-v12/stage1", endpoint_override = "renc.osn.xsede.org")
 arrow::open_dataset(s3_2, partitioning = c("cycle","reference_date")) |>  
   dplyr::filter(variable == "TMP") |>  
   dplyr::filter(cycle %in% c(6,12,18), site_id == "fcre", reference_date %in% dates, parameter == 1) |> 
@@ -44,7 +44,7 @@ arrow::open_dataset(s3_2, partitioning = c("cycle","reference_date")) |>
 
 message("Check Stage 2")
 
-s3_2 <- arrow::s3_bucket("drivers/noaa/gefs-v12/stage2/parquet/0", endpoint_override = "s3.flare-forecast.org")
+s3_2 <- arrow::s3_bucket("bio230121-bucket01/vt_backup/drivers/noaa/gefs-v12/stage2/parquet/0", endpoint_override = "renc.osn.xsede.org")
 arrow::open_dataset(s3_2, partitioning = "reference_date") |>  
   dplyr::filter(variable == "air_temperature") |> 
   dplyr::group_by(reference_date, parameter) |>  
@@ -55,7 +55,7 @@ arrow::open_dataset(s3_2, partitioning = "reference_date") |>
 
 message("Check Stage 3")
 
-s3_2 <- arrow::s3_bucket("drivers/noaa/gefs-v12/stage3/parquet/fcre", endpoint_override = "s3.flare-forecast.org")
+s3_2 <- arrow::s3_bucket("bio230121-bucket01/vt_backup/drivers/noaa/gefs-v12/stage3/parquet/fcre", endpoint_override = "renc.osn.xsede.org")
 arrow::open_dataset(s3_2) |> 
   dplyr::filter(variable == "air_temperature") |> 
   dplyr::collect() |> 

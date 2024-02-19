@@ -20,7 +20,7 @@ locations <- "site_list_v2.csv"
 Sys.unsetenv("AWS_DEFAULT_REGION")
 Sys.unsetenv("AWS_S3_ENDPOINT")
 Sys.setenv(AWS_EC2_METADATA_DISABLED="TRUE")
-s3 <- arrow::s3_bucket("drivers", endpoint_override = "s3.flare-forecast.org")
+s3 <- arrow::s3_bucket("bio230121-bucket01/vt_backup/drivers", endpoint_override = "renc.osn.xsede.org")
 
 # Set desired dates and threads
 # Adjust threads between 70 - 1120 depending on available RAM, CPU, + bandwidth
