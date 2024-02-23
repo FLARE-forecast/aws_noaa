@@ -49,7 +49,7 @@ if(length(A[stringr::str_detect(A, "gep")] == 60) & avail_day == Sys.Date()){
   message(paste0("Start: ",Sys.time()))
   message(paste0("Downloading: ", full_dates))
   
-  map(full_dates, noaa_gefs, cycle="00", max_horizon = 384, threads=threads, s3=s3, locations = locations,
+  map(full_dates, noaa_gefs, cycle="00", horizon = "006", threads=threads, s3=s3, locations = locations,
       name_pattern = "noaa/gefs-v12-reprocess/stage1/{cycle_int}/{nice_date}/{site_id}/part-0.parquet")
   
   print(paste0("End: ",Sys.time()))
