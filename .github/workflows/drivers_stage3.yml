@@ -1,0 +1,37 @@
+on:
+  schedule:
+    - cron: '0 23 * * *'
+  workflow_dispatch:
+
+name: gefs_osn_stage3
+
+jobs:
+  docker:
+    runs-on: self-hosted
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      OSN_KEY: ${{ secrets.OSN_KEY }}
+      OSN_SECRET: ${{ secrets.OSN_SECRET }}
+    #container: rocker/geospatial:latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install
+        shell: Rscript {0}
+        run: |
+          install.packages("remotes")
+          remotes::install_github("eco4cast/gefs4cast")
+          
+      - name: Download Pseudo
+        shell: Rscript {0}
+        run: |
+          source("drivers/download_psuedo.R")
+
+      - name: Update Stage3
+        shell: Rscript {0}
+        run: |
+          source("drivers/update_stage3.R")
+
+      - name: Healthcheck
+        #run: |
+        #  curl -m 10 --retry 5 https://hc-ping.com/cfa6fee0-6608-46f4-9cca-4e83445788fe
