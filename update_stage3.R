@@ -3,7 +3,7 @@ source("https://raw.githubusercontent.com/eco4cast/neon4cast/main/R/to_hourly.R"
 site_list <- readr::read_csv("site_list_v2.csv")|> 
   dplyr::pull(site_id)
 
-future::plan("future::multisession", workers = 8)
+future::plan("future::multisession", workers = parallel::detectCores())
 
 furrr::future_walk(site_list, function(curr_site_id){
   
