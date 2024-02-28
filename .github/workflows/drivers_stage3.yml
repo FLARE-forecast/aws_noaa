@@ -21,6 +21,9 @@ jobs:
         run: |
           install.packages("remotes")
           remotes::install_github("eco4cast/gefs4cast")
+          install.packages("minioclient")
+          install.packages("decor")
+          install.packages("imputeTS")
           
       - name: Download Pseudo
         shell: Rscript {0}
