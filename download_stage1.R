@@ -1,7 +1,7 @@
 library(gdalcubes)
 library(gefs4cast)
 
-readRenviron("/home/rstudio/.Renviron")
+#readRenviron("/home/rstudio/.Renviron")
 
 #gdalcubes::gdalcubes_options(parallel=2*parallel::detectCores())
 gdalcubes::gdalcubes_options(parallel=64)
