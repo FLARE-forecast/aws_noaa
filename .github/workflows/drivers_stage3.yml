@@ -25,6 +25,7 @@ jobs:
           install.packages("decor")
           install.packages("imputeTS")
           install.packages("future")
+          install.packages("furrr")
           
       - name: Download Pseudo
         shell: Rscript {0}
