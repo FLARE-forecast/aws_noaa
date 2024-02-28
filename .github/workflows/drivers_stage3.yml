@@ -24,6 +24,7 @@ jobs:
           install.packages("minioclient")
           install.packages("decor")
           install.packages("imputeTS")
+          install.packages("future")
           
       - name: Download Pseudo
         shell: Rscript {0}
