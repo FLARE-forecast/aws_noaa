@@ -28,12 +28,12 @@ jobs:
       - name: Download Pseudo
         shell: Rscript {0}
         run: |
-          source("drivers/download_psuedo.R")
+          source("download_psuedo.R")
 
       - name: Update Stage3
         shell: Rscript {0}
         run: |
-          source("drivers/update_stage3.R")
+          source("update_stage3.R")
 
       #- name: Healthcheck
         #run: |
