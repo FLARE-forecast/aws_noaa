@@ -1,9 +1,9 @@
-source("https://raw.githubusercontent.com/eco4cast/neon4cast/main/R/to_hourly.R")
+source("to_hourly.R")
 
 locations <- readr::read_csv("site_list_v2.csv")
 site_list <- locations |> dplyr::pull(site_id)
 
-future::plan("future::multisession", workers = parallel::detectCores())
+#future::plan("future::multisession", workers = parallel::detectCores())
 
 future::plan("future::sequential")
 
