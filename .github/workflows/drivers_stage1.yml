@@ -29,14 +29,11 @@ jobs:
 
       - name: Download stage 1
         shell: Rscript {0}
-        run: |
-          source("download_stage1.R")
+        run: source("download_stage1.R")
 
       - name: Generate stage 2
         shell: Rscript {0}
-        run: |
-          source("generate_stage2.R")
+        run: source("generate_stage2.R")
 
-      #- name: Healthcheck
-      #  run: |
-      #    curl -m 10 --retry 5 https://hc-ping.com/fc148462-2f07-4cd3-a11d-823982db0270
+      - name: Healthcheck
+        run: curl -m 10 --retry 5 https://hc-ping.com/3c7408aa-070a-4985-a856-356606a297b7
