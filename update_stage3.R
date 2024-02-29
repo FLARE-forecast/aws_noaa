@@ -1,9 +1,11 @@
 source("https://raw.githubusercontent.com/eco4cast/neon4cast/main/R/to_hourly.R")
 
-site_list <- readr::read_csv("site_list_v2.csv")|> 
-  dplyr::pull(site_id)
+locations <- readr::read_csv("site_list_v2.csv")
+site_list <- locations |> dplyr::pull(site_id)
 
 future::plan("future::multisession", workers = parallel::detectCores())
+
+future::plan("future::sequential")
 
 furrr::future_walk(site_list, function(curr_site_id){
   
@@ -45,7 +47,7 @@ furrr::future_walk(site_list, function(curr_site_id){
   if(nrow(df) > 0){
     
     df2 <- df |>
-      to_hourly(use_solar_geom = TRUE, psuedo = TRUE) |>
+      to_hourly(use_solar_geom = TRUE, psuedo = TRUE, locations = locations) |>
       dplyr::mutate(ensemble = as.numeric(stringr::str_sub(ensemble, start = 4, end = 5))) |>
       dplyr::rename(parameter = ensemble)
     
