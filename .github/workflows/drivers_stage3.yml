@@ -29,14 +29,11 @@ jobs:
           
       - name: Download Pseudo
         shell: Rscript {0}
-        run: |
-          source("download_psuedo.R")
+        run: source("download_psuedo.R")
 
       - name: Update Stage3
         shell: Rscript {0}
-        run: |
-          source("update_stage3.R")
+        run: source("update_stage3.R")
 
-      #- name: Healthcheck
-        #run: |
-        #  curl -m 10 --retry 5 https://hc-ping.com/cfa6fee0-6608-46f4-9cca-4e83445788fe
+      - name: Healthcheck
+        run: curl -m 10 --retry 5 https://hc-ping.com/6c3dec04-631a-4a8e-8c55-8837f2827e07
