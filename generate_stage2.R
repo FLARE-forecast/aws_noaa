@@ -3,14 +3,14 @@ source("to_hourly.R")
 site_list <- readr::read_csv("site_list_v2.csv")
 
 s3 <- arrow::s3_bucket("bio230121-bucket01/flare/drivers/met/gefs-v12",
-                       endpoint_override = "renc.osn.xsede.org",
+                       endpoint_override = "amnh1.osn.mghpcc.org",
                        access_key= Sys.getenv("OSN_KEY"),
                        secret_key= Sys.getenv("OSN_SECRET"))
 
 s3$CreateDir("stage2")
 
 s3_stage2 <- arrow::s3_bucket("bio230121-bucket01/flare/drivers/met/gefs-v12/stage2",
-                       endpoint_override = "renc.osn.xsede.org",
+                       endpoint_override = "amnh1.osn.mghpcc.org",
                        access_key= Sys.getenv("OSN_KEY"),
                        secret_key= Sys.getenv("OSN_SECRET"))
 
@@ -33,7 +33,7 @@ if(length(missing_dates) > 0){
     
     bucket <- paste0("bio230121-bucket01/flare/drivers/met/gefs-v12/stage1/reference_datetime=",missing_dates[i])
     
-    endpoint_override <- "https://renc.osn.xsede.org"
+    endpoint_override <- "https://amnh1.osn.mghpcc.org"
     s3 <- arrow::s3_bucket(paste0(bucket),
                            endpoint_override = endpoint_override,
                            anonymous = TRUE)
