@@ -13,7 +13,7 @@ Sys.setenv("GEFS_VERSION"="v12")
 dates <- seq(as.Date("2024-02-01"), Sys.Date()-1, by=1)
 
 message("GEFS v12 stage1")
-s3 <- gefs_s3_dir("stage1", path = "flare/drivers/met", endpoint = "https://renc.osn.xsede.org", bucket = "bio230121-bucket01")
+s3 <- gefs_s3_dir("stage1", path = "flare/drivers/met", endpoint = "https://amnh1.osn.mghpcc.org", bucket = "bio230121-bucket01")
 
 have_dates <- gsub("reference_datetime=", "", s3$ls())
 missing_dates <- dates[!(as.character(dates) %in% have_dates)]

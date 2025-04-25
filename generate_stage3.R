@@ -2,7 +2,7 @@ library(minioclient)
 source("to_hourly.R")
 
 #install_mc()
-mc_alias_set("osn", "renc.osn.xsede.org", "", "")
+mc_alias_set("osn", "amnh1.osn.mghpcc.org", "", "")
 mc_mirror("osn/bio230121-bucket01/flare/drivers/met/gefs-v12/pseudo", "pseudo")
 
 df <- arrow::open_dataset("pseudo") |>
@@ -15,14 +15,14 @@ locations <- readr::read_csv("site_list_v2.csv")
 site_list <- locations |> dplyr::pull(site_id)
 
 s3 <- arrow::s3_bucket("bio230121-bucket01/flare/drivers/met/gefs-v12",
-                       endpoint_override = "renc.osn.xsede.org",
+                       endpoint_override = "amnh1.osn.mghpcc.org",
                        access_key= Sys.getenv("OSN_KEY"),
                        secret_key= Sys.getenv("OSN_SECRET"))
 
 s3$CreateDir("stage3")
 
 s3 <- arrow::s3_bucket("bio230121-bucket01/flare/drivers/met/gefs-v12/stage3",
-                       endpoint_override = "renc.osn.xsede.org",
+                       endpoint_override = "amnh1.osn.mghpcc.org",
                        access_key= Sys.getenv("OSN_KEY"),
                        secret_key= Sys.getenv("OSN_SECRET"))
 
@@ -43,7 +43,7 @@ furrr::future_walk(site_list, function(curr_site_id, locations){
     dplyr::select(-date, -new_datetime)
   
   s3 <- arrow::s3_bucket("bio230121-bucket01/flare/drivers/met/gefs-v12/stage3",
-                         endpoint_override = "renc.osn.xsede.org",
+                         endpoint_override = "amnh1.osn.mghpcc.org",
                          access_key= Sys.getenv("OSN_KEY"),
                          secret_key= Sys.getenv("OSN_SECRET"))
   
