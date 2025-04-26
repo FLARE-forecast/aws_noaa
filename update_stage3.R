@@ -12,7 +12,7 @@ furrr::future_walk(site_list, function(curr_site_id){
   print(curr_site_id)
   
   s3 <- arrow::s3_bucket("bio230121-bucket01/flare/drivers/met/gefs-v12/stage3",
-                         endpoint_override = "renc.osn.xsede.org",
+                         endpoint_override = "amnh1.osn.mghpcc.org",
                          access_key= Sys.getenv("OSN_KEY"),
                          secret_key= Sys.getenv("OSN_SECRET"))
   
@@ -25,7 +25,7 @@ furrr::future_walk(site_list, function(curr_site_id){
     dplyr::pull(max)
   
   s3_pseudo <- arrow::s3_bucket("bio230121-bucket01/flare/drivers/met/gefs-v12/pseudo",
-                                endpoint_override = "renc.osn.xsede.org",
+                                endpoint_override = "amnh1.osn.mghpcc.org",
                                 access_key= Sys.getenv("OSN_KEY"),
                                 secret_key= Sys.getenv("OSN_SECRET"))
   
