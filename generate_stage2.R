@@ -9,10 +9,14 @@ s3 <- arrow::s3_bucket("bio230121-bucket01/flare/drivers/met/gefs-v12",
 
 s3$CreateDir("stage2")
 
-s3_stage2 <- arrow::s3_bucket("bio230121-bucket01/flare/drivers/met/gefs-v12/stage2",
-                       endpoint_override = "amnh1.osn.mghpcc.org",
-                       access_key= Sys.getenv("OSN_KEY"),
-                       secret_key= Sys.getenv("OSN_SECRET"))
+#s3_stage2 <- arrow::s3_bucket("bio230121-bucket01/flare/drivers/met/gefs-v12/stage2",
+#                       endpoint_override = "amnh1.osn.mghpcc.org",
+#                       access_key= Sys.getenv("OSN_KEY"),
+#                       secret_key= Sys.getenv("OSN_SECRET"))
+duckdbfs::duckdb_secrets(
+    endpoint = 'amnh1.osn.mghpcc.org',
+    key = Sys.getenv("OSN_KEY"),
+    secret = Sys.getenv("OSN_SECRET"))
 
 df <- arrow::open_dataset(s3_stage2) |>
   dplyr::distinct(reference_datetime) |>
@@ -49,6 +53,8 @@ if(length(missing_dates) > 0){
                     reference_datetime = lubridate::as_date(reference_datetime)) |>
       dplyr::rename(parameter = ensemble)
     
-    arrow::write_dataset(hourly_df, path = s3_stage2, partitioning = c("reference_datetime", "site_id"))
+   # arrow::write_dataset(hourly_df, path = s3_stage2, partitioning = c("reference_datetime", "site_id"))
+   duckdbfs::write_dataset(hourly_df, path = "s3://bio230121-bucket01/flare/drivers/met/gefs-v12/stage2", format = 'parquet',
+                              partitioning = c("reference_datetime", "site_id"))
   }
 }
