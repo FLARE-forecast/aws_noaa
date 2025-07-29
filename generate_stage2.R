@@ -10,10 +10,11 @@ s3 <- arrow::s3_bucket("bio230121-bucket01/flare/drivers/met/gefs-v12",
 
 s3$CreateDir("stage2")
 
-#s3_stage2 <- arrow::s3_bucket("bio230121-bucket01/flare/drivers/met/gefs-v12/stage2",
-#                       endpoint_override = "amnh1.osn.mghpcc.org",
-#                       access_key= Sys.getenv("OSN_KEY"),
-#                       secret_key= Sys.getenv("OSN_SECRET"))
+s3_stage2 <- arrow::s3_bucket("bio230121-bucket01/flare/drivers/met/gefs-v12/stage2",
+                       endpoint_override = "amnh1.osn.mghpcc.org",
+                       access_key= Sys.getenv("OSN_KEY"),
+                       secret_key= Sys.getenv("OSN_SECRET"))
+
 duckdbfs::duckdb_secrets(
     endpoint = 'https://amnh1.osn.mghpcc.org',
     key = Sys.getenv("OSN_KEY"),
