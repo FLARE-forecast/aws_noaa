@@ -2,7 +2,7 @@ library(minioclient)
 source("to_hourly.R")
 
 duckdbfs::duckdb_secrets(
-    endpoint = 'https://amnh1.osn.mghpcc.org',
+    endpoint = 'amnh1.osn.mghpcc.org',
     key = Sys.getenv("OSN_KEY"),
     secret = Sys.getenv("OSN_SECRET"))
 

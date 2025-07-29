@@ -16,7 +16,7 @@ s3_stage2 <- arrow::s3_bucket("bio230121-bucket01/flare/drivers/met/gefs-v12/sta
                        secret_key= Sys.getenv("OSN_SECRET"))
 
 duckdbfs::duckdb_secrets(
-    endpoint = 'https://amnh1.osn.mghpcc.org',
+    endpoint = 'amnh1.osn.mghpcc.org',
     key = Sys.getenv("OSN_KEY"),
     secret = Sys.getenv("OSN_SECRET"))
 
