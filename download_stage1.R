@@ -1,6 +1,7 @@
 library(gdalcubes)
 library(gefs4cast)
 
+devtools::install_github('cboettig/duckdbfs')
 #readRenviron("/home/rstudio/.Renviron")
 
 #gdalcubes::gdalcubes_options(parallel=2*parallel::detectCores())
