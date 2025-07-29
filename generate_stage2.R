@@ -1,3 +1,4 @@
+devtools::install_github('cboettig/duckdbfs')
 source("to_hourly.R")
 
 site_list <- readr::read_csv("site_list_v2.csv")
