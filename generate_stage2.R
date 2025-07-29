@@ -14,7 +14,7 @@ s3$CreateDir("stage2")
 #                       access_key= Sys.getenv("OSN_KEY"),
 #                       secret_key= Sys.getenv("OSN_SECRET"))
 duckdbfs::duckdb_secrets(
-    endpoint = 'amnh1.osn.mghpcc.org',
+    endpoint = 'https://amnh1.osn.mghpcc.org',
     key = Sys.getenv("OSN_KEY"),
     secret = Sys.getenv("OSN_SECRET"))
 
