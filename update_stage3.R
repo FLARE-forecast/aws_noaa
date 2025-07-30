@@ -11,6 +11,11 @@ furrr::future_walk(site_list, function(curr_site_id){
   
   print(curr_site_id)
   
+  duckdbfs::duckdb_secrets(
+    endpoint = 'amnh1.osn.mghpcc.org',
+    key = Sys.getenv("OSN_KEY"),
+    secret = Sys.getenv("OSN_SECRET"))
+  
   s3 <- arrow::s3_bucket("bio230121-bucket01/flare/drivers/met/gefs-v12/stage3",
                          endpoint_override = "amnh1.osn.mghpcc.org",
                          access_key= Sys.getenv("OSN_KEY"),
@@ -57,6 +62,8 @@ furrr::future_walk(site_list, function(curr_site_id){
     df2 |>
       dplyr::bind_rows(stage3_df_update) |>
       dplyr::arrange(variable, datetime, parameter) |>
-      arrow::write_dataset(path = s3, partitioning = "site_id")
+      #arrow::write_dataset(path = s3, partitioning = "site_id")
+      duckdbfs::write_dataset(path = "s3://bio230121-bucket01/flare/drivers/met/gefs-v12/stage3", format = 'parquet',
+                              partitioning = "site_id")
   }
 })
