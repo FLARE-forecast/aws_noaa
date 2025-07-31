@@ -1,8 +1,14 @@
 source("to_hourly.R")
 
+duckdbfs::duckdb_secrets(
+    endpoint = 'amnh1.osn.mghpcc.org',
+    key = Sys.getenv("OSN_KEY"),
+    secret = Sys.getenv("OSN_SECRET"))
+
 locations <- readr::read_csv("site_list_v2.csv")
 site_list <- locations |> dplyr::pull(site_id)
 
+message('starting download loop...')
 #future::plan("future::multisession", workers = parallel::detectCores())
 
 future::plan("future::sequential")
@@ -10,11 +16,6 @@ future::plan("future::sequential")
 furrr::future_walk(site_list, function(curr_site_id){
   
   print(curr_site_id)
-  
-  duckdbfs::duckdb_secrets(
-    endpoint = 'amnh1.osn.mghpcc.org',
-    key = Sys.getenv("OSN_KEY"),
-    secret = Sys.getenv("OSN_SECRET"))
   
   s3 <- arrow::s3_bucket("bio230121-bucket01/flare/drivers/met/gefs-v12/stage3",
                          endpoint_override = "amnh1.osn.mghpcc.org",
