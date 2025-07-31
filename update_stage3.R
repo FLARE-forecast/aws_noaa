@@ -56,6 +56,8 @@ message('starting download loop...')
                   datetime = lubridate::as_datetime(datetime)) |>
     dplyr::select(-date, -new_datetime)
   
+  message('check pseudo df...')
+  
   if(nrow(df) > 0){
     
     df2 <- df |>
@@ -63,9 +65,11 @@ message('starting download loop...')
       dplyr::mutate(ensemble = as.numeric(stringr::str_sub(ensemble, start = 4, end = 5))) |>
       dplyr::rename(parameter = ensemble)
     
+    message('df2 converted to hourly...')
     stage3_df_update <- stage3_df |>
       dplyr::filter(datetime < min(df2$datetime))
     
+    message('save df2...')
     df2 |>
       dplyr::bind_rows(stage3_df_update) |>
       dplyr::arrange(variable, datetime, parameter) |>
