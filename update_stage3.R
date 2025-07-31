@@ -76,7 +76,6 @@ message('starting download loop...')
       #arrow::write_dataset(path = s3, partitioning = "site_id")
 
     print(names(df_final)
-    print(nrow(df_final))
           
     message('save stage3...')
     duckdbfs::write_dataset(df_final, path = "s3://bio230121-bucket01/flare/drivers/met/gefs-v12/stage3", format = 'parquet',
