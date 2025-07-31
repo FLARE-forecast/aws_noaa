@@ -2,9 +2,9 @@ source("to_hourly.R")
 install.packages('utils')
 
 duckdbfs::duckdb_secrets(
-    endpoint = 'amnh1.osn.mghpcc.org',
-    key = Sys.getenv("OSN_KEY"),
-    secret = Sys.getenv("OSN_SECRET"))
+  endpoint = 'amnh1.osn.mghpcc.org',
+  key = Sys.getenv("OSN_KEY"),
+  secret = Sys.getenv("OSN_SECRET"))
 
 locations <- readr::read_csv("site_list_v2.csv")
 site_list <- locations |> dplyr::pull(site_id)
@@ -16,9 +16,9 @@ message('starting loop...')
 future::plan("future::sequential")
 
 furrr::future_walk(site_list, function(curr_site_id){
-
+  
   #site_list <- site_list[site_list != 'BARC']
-
+  
   #for (site in site_list){
   #curr_site_id = site
   print(curr_site_id)
@@ -35,9 +35,9 @@ furrr::future_walk(site_list, function(curr_site_id){
   max_date <- stage3_df |>
     dplyr::summarise(max = as.character(lubridate::as_date(max(datetime)))) |>
     dplyr::pull(max)
-
+  
   print(max_date)
-
+  
   s3_pseudo <- arrow::s3_bucket("bio230121-bucket01/flare/drivers/met/gefs-v12/pseudo",
                                 endpoint_override = "amnh1.osn.mghpcc.org",
                                 access_key= Sys.getenv("OSN_KEY"),
@@ -71,19 +71,19 @@ furrr::future_walk(site_list, function(curr_site_id){
     df_final <- df2 |>
       dplyr::bind_rows(stage3_df_update) |>
       dplyr::arrange(variable, datetime, parameter) #|>
-      #arrow::write_dataset(path = s3, partitioning = "site_id")
+    #arrow::write_dataset(path = s3, partitioning = "site_id")
     
     rm(df)
     rm(df2)
     rm(stage3_df_update)
     gc()
-
+    
     message('save stage3...')
     print(nrow(df_final))
     print(utils::object.size(df_final))
     
     duckdbfs::write_dataset(df_final, path = "s3://bio230121-bucket01/flare/drivers/met/gefs-v12/stage3", format = 'parquet',
-                              partitioning = "site_id")
+                            partitioning = "site_id")
   }
   rm(df_final)
   gc()
