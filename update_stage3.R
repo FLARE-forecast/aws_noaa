@@ -21,10 +21,12 @@ furrr::future_walk(site_list, function(curr_site_id){
                          access_key= Sys.getenv("OSN_KEY"),
                          secret_key= Sys.getenv("OSN_SECRET"))
   
+  message('stage3 site download')
   stage3_df <- arrow::open_dataset(s3) |>
     dplyr::filter(site_id == curr_site_id) |>
     dplyr::collect()
   
+  message('pull max date')
   max_date <- stage3_df |>
     dplyr::summarise(max = as.character(lubridate::as_date(max(datetime)))) |>
     dplyr::pull(max)
@@ -37,6 +39,8 @@ furrr::future_walk(site_list, function(curr_site_id){
   vars <- names(stage3_df)
   
   cut_off <- as.character(lubridate::as_date(max_date) - lubridate::days(3))
+  
+  message('pseudo collect...')
   
   df <- arrow::open_dataset(s3_pseudo) |>
     dplyr::filter(variable %in% c("PRES","TMP","RH","UGRD","VGRD","APCP","DSWRF","DLWRF")) |>
