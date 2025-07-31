@@ -77,6 +77,11 @@ message('starting download loop...')
       dplyr::bind_rows(stage3_df_update) |>
       dplyr::arrange(variable, datetime, parameter) #|>
       #arrow::write_dataset(path = s3, partitioning = "site_id")
+    
+    rm(df)
+    rm(df2)
+    rm(stage3_df_update)
+    gc()
 
     print(names(df_final))
     print(nrow(df_final))
