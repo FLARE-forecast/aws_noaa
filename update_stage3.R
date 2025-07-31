@@ -19,7 +19,7 @@ message('starting loop...')
 
 #site_list <- site_list[site_list != 'BARC']
 
-site_list = c("MONG", "YELL", "SAUR", "SPLK")
+site_list = c("TRLK", "TRBG", "LKME")
 
 for (site in site_list){
   curr_site_id = site
