@@ -14,6 +14,7 @@ message('starting download loop...')
 #future::plan("future::sequential")
 
 #furrr::future_walk(site_list, function(curr_site_id){
+
   
   curr_site_id = 'BARC'
   print(curr_site_id)
