@@ -9,15 +9,14 @@ duckdbfs::duckdb_secrets(
 locations <- readr::read_csv("site_list_v2.csv")
 site_list <- locations |> dplyr::pull(site_id)
 
-message('starting download loop...')
+message('starting loop...')
+
 #future::plan("future::multisession", workers = parallel::detectCores())
 
-#future::plan("future::sequential")
+future::plan("future::sequential")
 
-#furrr::future_walk(site_list, function(curr_site_id){
+furrr::future_walk(site_list, function(curr_site_id){
 
-  
-  curr_site_id = 'BARC'
   print(curr_site_id)
   
   s3 <- arrow::s3_bucket("bio230121-bucket01/flare/drivers/met/gefs-v12/stage3",
@@ -25,12 +24,10 @@ message('starting download loop...')
                          access_key= Sys.getenv("OSN_KEY"),
                          secret_key= Sys.getenv("OSN_SECRET"))
   
-  message('stage3 site download')
   stage3_df <- arrow::open_dataset(s3) |>
     dplyr::filter(site_id == curr_site_id) |>
     dplyr::collect()
   
-  message('pull max date')
   max_date <- stage3_df |>
     dplyr::summarise(max = as.character(lubridate::as_date(max(datetime)))) |>
     dplyr::pull(max)
@@ -46,8 +43,6 @@ message('starting download loop...')
   
   cut_off <- as.character(lubridate::as_date(max_date) - lubridate::days(3))
   
-  message('pseudo collect...')
-  
   df <- arrow::open_dataset(s3_pseudo) |>
     dplyr::filter(variable %in% c("PRES","TMP","RH","UGRD","VGRD","APCP","DSWRF","DLWRF")) |>
     dplyr::filter(site_id == curr_site_id,
@@ -59,8 +54,6 @@ message('starting download loop...')
                   datetime = lubridate::as_datetime(datetime)) |>
     dplyr::select(-date, -new_datetime)
   
-  message('check pseudo df...')
-  
   if(nrow(df) > 0){
     
     df2 <- df |>
@@ -68,11 +61,9 @@ message('starting download loop...')
       dplyr::mutate(ensemble = as.numeric(stringr::str_sub(ensemble, start = 4, end = 5))) |>
       dplyr::rename(parameter = ensemble)
     
-    message('df2 converted to hourly...')
     stage3_df_update <- stage3_df |>
       dplyr::filter(datetime < min(df2$datetime))
     
-    message('create final df...')
     df_final <- df2 |>
       dplyr::bind_rows(stage3_df_update) |>
       dplyr::arrange(variable, datetime, parameter) #|>
@@ -83,12 +74,11 @@ message('starting download loop...')
     rm(stage3_df_update)
     gc()
 
-    print(names(df_final))
+    message('save stage3...')
     print(nrow(df_final))
     print(utils::object.size(df_final))
-          
-    message('save stage3...')
+    
     duckdbfs::write_dataset(df_final, path = "s3://bio230121-bucket01/flare/drivers/met/gefs-v12/stage3", format = 'parquet',
                               partitioning = "site_id")
   }
-#})
+})
