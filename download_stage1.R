@@ -4,6 +4,11 @@ library(gefs4cast)
 devtools::install_github('cboettig/duckdbfs')
 #readRenviron("/home/rstudio/.Renviron")
 
+duckdbfs::duckdb_secrets(
+  endpoint = 'amnh1.osn.mghpcc.org',
+  key = Sys.getenv("OSN_KEY"),
+  secret = Sys.getenv("OSN_SECRET"))
+
 #gdalcubes::gdalcubes_options(parallel=2*parallel::detectCores())
 gdalcubes::gdalcubes_options(parallel=64)
 
@@ -22,4 +27,4 @@ missing_dates <- dates[!(as.character(dates) %in% have_dates)]
 #gefs_to_parquet(missing_dates, path = s3, sites = sites, cycle = "00")
 ## function that uses duckdbfs write method
 parquet_path <- 'bio230121-bucket01/flare/drivers/met/gefs-v12/stage1'
-gefs_to_parquet(missing_dates, path = parquet_path, sites = sites, cycle = "00", s3_endpoint = 'amnh1.osn.mghpcc.org')
+gefs_to_parquet(missing_dates, path = parquet_path, sites = sites, cycle = "00")
