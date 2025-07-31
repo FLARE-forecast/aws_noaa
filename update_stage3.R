@@ -1,4 +1,5 @@
 source("to_hourly.R")
+install.packages('utils')
 
 duckdbfs::duckdb_secrets(
     endpoint = 'amnh1.osn.mghpcc.org',
@@ -77,6 +78,7 @@ message('starting download loop...')
 
     print(names(df_final))
     print(nrow(df_final))
+    print(utils::object.size(df_final))
           
     message('save stage3...')
     duckdbfs::write_dataset(df_final, path = "s3://bio230121-bucket01/flare/drivers/met/gefs-v12/stage3", format = 'parquet',
