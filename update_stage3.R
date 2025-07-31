@@ -69,12 +69,14 @@ message('starting download loop...')
     stage3_df_update <- stage3_df |>
       dplyr::filter(datetime < min(df2$datetime))
     
-    message('save df2...')
-    df2 |>
+    message('create final df...')
+    df_final <- df2 |>
       dplyr::bind_rows(stage3_df_update) |>
-      dplyr::arrange(variable, datetime, parameter) |>
+      dplyr::arrange(variable, datetime, parameter) #|>
       #arrow::write_dataset(path = s3, partitioning = "site_id")
-      duckdbfs::write_dataset(path = "s3://bio230121-bucket01/flare/drivers/met/gefs-v12/stage3", format = 'parquet',
+    
+    message('save stage3...')
+    duckdbfs::write_dataset(df_final, path = "s3://bio230121-bucket01/flare/drivers/met/gefs-v12/stage3", format = 'parquet',
                               partitioning = "site_id")
   }
 #})
