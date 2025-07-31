@@ -34,7 +34,9 @@ message('starting download loop...')
   max_date <- stage3_df |>
     dplyr::summarise(max = as.character(lubridate::as_date(max(datetime)))) |>
     dplyr::pull(max)
-  
+
+  print(max_date)
+
   s3_pseudo <- arrow::s3_bucket("bio230121-bucket01/flare/drivers/met/gefs-v12/pseudo",
                                 endpoint_override = "amnh1.osn.mghpcc.org",
                                 access_key= Sys.getenv("OSN_KEY"),
