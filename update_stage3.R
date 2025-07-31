@@ -13,6 +13,7 @@ message('starting download loop...')
 
 future::plan("future::sequential")
 
+message('made it past the plan...')
 furrr::future_walk(site_list, function(curr_site_id){
   
   print(curr_site_id)
