@@ -13,10 +13,14 @@ message('starting loop...')
 
 #future::plan("future::multisession", workers = parallel::detectCores())
 
-future::plan("future::sequential")
+#future::plan("future::sequential")
 
-furrr::future_walk(site_list, function(curr_site_id){
+#furrr::future_walk(site_list, function(curr_site_id){
 
+site_list <- site_list[site_list != 'BARC']
+
+for (site in site_list){
+  curr_site_id = site
   print(curr_site_id)
   
   s3 <- arrow::s3_bucket("bio230121-bucket01/flare/drivers/met/gefs-v12/stage3",
@@ -81,4 +85,6 @@ furrr::future_walk(site_list, function(curr_site_id){
     duckdbfs::write_dataset(df_final, path = "s3://bio230121-bucket01/flare/drivers/met/gefs-v12/stage3", format = 'parquet',
                               partitioning = "site_id")
   }
-})
+  rm(df_final)
+  gc()
+}#)
