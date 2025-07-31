@@ -11,10 +11,11 @@ site_list <- locations |> dplyr::pull(site_id)
 message('starting download loop...')
 #future::plan("future::multisession", workers = parallel::detectCores())
 
-future::plan("future::sequential")
+#future::plan("future::sequential")
 
-furrr::future_walk(site_list, function(curr_site_id){
+#furrr::future_walk(site_list, function(curr_site_id){
   
+  curr_site_id = 'BARC'
   print(curr_site_id)
   
   s3 <- arrow::s3_bucket("bio230121-bucket01/flare/drivers/met/gefs-v12/stage3",
@@ -71,4 +72,4 @@ furrr::future_walk(site_list, function(curr_site_id){
       duckdbfs::write_dataset(path = "s3://bio230121-bucket01/flare/drivers/met/gefs-v12/stage3", format = 'parquet',
                               partitioning = "site_id")
   }
-})
+#})
