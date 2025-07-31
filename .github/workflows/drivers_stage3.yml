@@ -21,6 +21,7 @@ jobs:
         run: |
           install.packages("remotes")
           remotes::install_github("eco4cast/gefs4cast")
+          remotes::install_github("cboettig/duckdbfs")
           install.packages("minioclient")
           install.packages("decor")
           install.packages("imputeTS")
