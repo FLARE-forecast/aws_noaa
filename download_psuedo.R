@@ -25,4 +25,5 @@ missing_dates <- dates_pseudo[!(as.character(dates_pseudo) %in% have_dates)]
 parquet_path <- 'bio230121-bucket01/flare/drivers/met/gefs-v12/pseudo'
 gefs4cast:::gefs_pseudo_measures(missing_dates,  path = parquet_path, sites = sites)
 
+rm()
 gc()
