@@ -47,6 +47,7 @@ for (site in site_list){
   
   cut_off <- as.character(lubridate::as_date(max_date) - lubridate::days(3))
   
+  message('download pseudo...')
   df <- arrow::open_dataset(s3_pseudo) |>
     dplyr::filter(variable %in% c("PRES","TMP","RH","UGRD","VGRD","APCP","DSWRF","DLWRF")) |>
     dplyr::filter(site_id == curr_site_id,
@@ -68,6 +69,7 @@ for (site in site_list){
     stage3_df_update <- stage3_df |>
       dplyr::filter(datetime < min(df2$datetime))
     
+    message('generate df_final...')
     df_final <- df2 |>
       dplyr::bind_rows(stage3_df_update) |>
       dplyr::arrange(variable, datetime, parameter) #|>
