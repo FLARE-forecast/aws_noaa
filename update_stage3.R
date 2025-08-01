@@ -69,15 +69,19 @@ for (site in site_list){
     stage3_df_update <- stage3_df |>
       dplyr::filter(datetime < min(df2$datetime))
     
+    rm(df)
+    rm(stage3_df)
+    gc()
+    
     message('generate df_final...')
+    
     df_final <- df2 |>
       dplyr::bind_rows(stage3_df_update) |>
       dplyr::arrange(variable, datetime, parameter) #|>
     #arrow::write_dataset(path = s3, partitioning = "site_id")
     
-    rm(df)
-    rm(df2)
     rm(stage3_df_update)
+    rm(df2)
     gc()
     
     message('save stage3...')
