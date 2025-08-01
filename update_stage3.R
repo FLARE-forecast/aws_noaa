@@ -16,11 +16,12 @@ message('starting loop...')
 #future::plan("future::sequential")
 
 #furrr::future_walk(site_list, function(curr_site_id){
+
+purrr::walk(site_list, function(curr_site_id){  
+#site_list <- c("TOOK", "fcre", "bvre")
   
-site_list <- c("TOOK", "fcre", "bvre")
-  
-for (site in site_list){
-  curr_site_id = site
+#for (site in site_list){
+  #curr_site_id = site
   print(curr_site_id)
   
   s3 <- arrow::s3_bucket("bio230121-bucket01/flare/drivers/met/gefs-v12/stage3",
@@ -95,4 +96,4 @@ for (site in site_list){
   }
   rm(df_final)
   gc()
-}#)
+})
