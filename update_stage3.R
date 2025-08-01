@@ -9,8 +9,6 @@ duckdbfs::duckdb_secrets(
 locations <- readr::read_csv("site_list_v2.csv")
 site_list <- locations |> dplyr::pull(site_id)
 
-site_list <- site_list[1:5]
-
 message('starting loop...')
 
 #future::plan("future::multisession", workers = parallel::detectCores())
@@ -19,7 +17,7 @@ message('starting loop...')
 
 #furrr::future_walk(site_list, function(curr_site_id){
   
-site_list <- c("CRAM", "LIRO", "PRLA", "PRPO", "SUGG", "TOOK")
+site_list <- c("BARC")
   
 for (site in site_list){
   curr_site_id = site
