@@ -9,6 +9,8 @@ duckdbfs::duckdb_secrets(
 locations <- readr::read_csv("site_list_v2.csv")
 site_list <- locations |> dplyr::pull(site_id)
 
+site_list <- site_list[1:5]
+
 message('starting loop...')
 
 #future::plan("future::multisession", workers = parallel::detectCores())
