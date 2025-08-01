@@ -20,6 +20,7 @@ message('starting loop...')
 purrr::walk(site_list, function(curr_site_id){  
 #site_list <- c("TOOK", "fcre", "bvre")
   
+
 #for (site in site_list){
   #curr_site_id = site
   print(curr_site_id)
