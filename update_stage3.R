@@ -17,7 +17,7 @@ message('starting loop...')
 
 #furrr::future_walk(site_list, function(curr_site_id){
   
-site_list <- c("PRPO","SUGG","TOOK")
+site_list <- c("TOOK", "fcre", "bvre")
   
 for (site in site_list){
   curr_site_id = site
@@ -81,6 +81,8 @@ for (site in site_list){
     #arrow::write_dataset(path = s3, partitioning = "site_id")
     
     rm(stage3_df_update)
+    rm(s3)
+    rm(s3_pseudo)
     rm(df2)
     gc()
     
