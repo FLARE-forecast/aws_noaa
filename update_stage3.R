@@ -19,7 +19,7 @@ message('starting loop...')
 
 #furrr::future_walk(site_list, function(curr_site_id){
   
-#site_list <- site_list
+site_list <- c("CRAM", "LIRO", "PRLA", "PRPO", "SUGG", "TOOK")
   
 for (site in site_list){
   curr_site_id = site
