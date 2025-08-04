@@ -1,6 +1,8 @@
 source("to_hourly.R")
 install.packages('utils')
 
+install.packages("arrow", version='20.0.0')
+
 duckdbfs::duckdb_secrets(
   endpoint = 'amnh1.osn.mghpcc.org',
   key = Sys.getenv("OSN_KEY"),
@@ -13,16 +15,16 @@ message('starting loop...')
 
 #future::plan("future::multisession", workers = parallel::detectCores())
 
-#future::plan("future::sequential")
+future::plan("future::sequential")
 
-#furrr::future_walk(site_list, function(curr_site_id){
+furrr::future_walk(site_list, function(curr_site_id){
 
 #purrr::walk(site_list, function(curr_site_id){  
-site_list <- c("BARC", "CRAM", "LIRO")
+#site_list <- c("BARC", "CRAM", "LIRO")
   
 
-for (site in site_list){
-  curr_site_id = site
+#for (site in site_list){
+  #curr_site_id = site
   print(curr_site_id)
   
   s3 <- arrow::s3_bucket("bio230121-bucket01/flare/drivers/met/gefs-v12/stage3",
@@ -49,7 +51,7 @@ for (site in site_list){
   
   cut_off <- as.character(lubridate::as_date(max_date) - lubridate::days(3))
   
-  message('download pseudo...')
+  #message('download pseudo...')
   df <- arrow::open_dataset(s3_pseudo) |>
     dplyr::filter(variable %in% c("PRES","TMP","RH","UGRD","VGRD","APCP","DSWRF","DLWRF")) |>
     dplyr::filter(site_id == curr_site_id,
@@ -80,21 +82,21 @@ for (site in site_list){
     df_final <- df2 |>
       dplyr::bind_rows(stage3_df_update) |>
       dplyr::arrange(variable, datetime, parameter) #|>
-    #arrow::write_dataset(path = s3, partitioning = "site_id")
+    arrow::write_dataset(path = s3, partitioning = "site_id")
     
-    rm(stage3_df_update)
-    rm(s3)
-    rm(s3_pseudo)
-    rm(df2)
-    gc()
+    #rm(stage3_df_update)
+    #rm(s3)
+    #rm(s3_pseudo)
+    #rm(df2)
+    #gc()
     
-    message('save stage3...')
-    print(nrow(df_final))
-    print(utils::object.size(df_final))
+    #message('save stage3...')
+    #print(nrow(df_final))
+    #print(utils::object.size(df_final))
     
-    duckdbfs::write_dataset(df_final, path = "s3://bio230121-bucket01/flare/drivers/met/gefs-v12/stage3", format = 'parquet',
-                            partitioning = "site_id")
+    #duckdbfs::write_dataset(df_final, path = "s3://bio230121-bucket01/flare/drivers/met/gefs-v12/stage3", format = 'parquet',
+    #                        partitioning = "site_id")
   }
-  rm(df_final)
-  gc()
-}#)
+  #rm(df_final)
+  #gc()
+})
