@@ -47,6 +47,9 @@ furrr::future_walk(site_list, function(curr_site_id){
                   datetime = lubridate::as_datetime(datetime)) |>
     dplyr::select(-date, -new_datetime)
   
+  rm(s3_pseudo)
+  gc()
+  
   if(nrow(df) > 0){
     
     df2 <- df |>
@@ -54,12 +57,21 @@ furrr::future_walk(site_list, function(curr_site_id){
       dplyr::mutate(ensemble = as.numeric(stringr::str_sub(ensemble, start = 4, end = 5))) |>
       dplyr::rename(parameter = ensemble)
     
+    rm(df)
+    gc()
+    
     stage3_df_update <- stage3_df |>
       dplyr::filter(datetime < min(df2$datetime))
+    
+    rm(stage3_df)
+    gc()
     
     df2 |>
       dplyr::bind_rows(stage3_df_update) |>
       dplyr::arrange(variable, datetime, parameter) |>
       arrow::write_dataset(path = s3, partitioning = "site_id")
   }
+  rm(stage3_df_update)
+  rm(df2)
+  gc()
 })
