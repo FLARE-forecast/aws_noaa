@@ -81,7 +81,7 @@ furrr::future_walk(site_list, function(curr_site_id){
     
     df_final <- df2 |>
       dplyr::bind_rows(stage3_df_update) |>
-      dplyr::arrange(variable, datetime, parameter) #|>
+      dplyr::arrange(variable, datetime, parameter) |>
     arrow::write_dataset(path = s3, partitioning = "site_id")
     
     #rm(stage3_df_update)
