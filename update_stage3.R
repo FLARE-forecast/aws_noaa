@@ -18,7 +18,7 @@ message('starting loop...')
 #furrr::future_walk(site_list, function(curr_site_id){
 
 #purrr::walk(site_list, function(curr_site_id){  
-site_list <- c("LKME")
+site_list <- c("fcre", "bvre")
   
 
 for (site in site_list){
