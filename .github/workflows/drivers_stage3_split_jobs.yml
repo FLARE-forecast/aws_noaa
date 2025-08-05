@@ -3,7 +3,7 @@ on:
     - cron: '0 23 * * *'
   workflow_dispatch:
 
-name: gefs_osn_stage3
+name: gefs_osn_stage3_site_split
 
 jobs:
   pseudo_stage3_1:
