@@ -5,7 +5,7 @@ install.packages("arrow", version='20.0.0')
 
 locations <- readr::read_csv("site_list_v2.csv")
 #site_list <- locations |> dplyr::pull(site_id)
-site_list <- c('CRAM')
+site_list <- c("LIRO", "PRLA", "PRPO")
 #future::plan("future::multisession", workers = parallel::detectCores())
 
 future::plan("future::sequential")
