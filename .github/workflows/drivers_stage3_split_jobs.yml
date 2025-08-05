@@ -31,10 +31,6 @@ jobs:
       - name: Download Pseudo
         shell: Rscript {0}
         run: source("download_psuedo.R")
-
-      - name: Update Stage3
-        shell: Rscript {0}
-        run: source("update_stage3_1.R")
         
   stage3_1:
     needs: pseudo
