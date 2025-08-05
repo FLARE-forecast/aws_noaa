@@ -1,0 +1,222 @@
+on:
+  schedule:
+    - cron: '0 23 * * *'
+  workflow_dispatch:
+
+name: gefs_osn_stage3
+
+jobs:
+  pseudo_stage3_1:
+    runs-on: ubuntu-latest #self-hosted
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      OSN_KEY: ${{ secrets.OSN_KEY }}
+      OSN_SECRET: ${{ secrets.OSN_SECRET }}
+    container: rocker/geospatial:latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install
+        shell: Rscript {0}
+        run: |
+          install.packages("remotes")
+          remotes::install_github("eco4cast/gefs4cast")
+          remotes::install_github("cboettig/duckdbfs")
+          install.packages("minioclient")
+          install.packages("decor")
+          install.packages("imputeTS")
+          install.packages("future")
+          install.packages("furrr")
+          
+      - name: Download Pseudo
+        shell: Rscript {0}
+        run: source("download_psuedo.R")
+
+      - name: Update Stage3
+        shell: Rscript {0}
+        run: source("update_stage3_1.R")
+        
+  stage3_2:
+    runs-on: ubuntu-latest #self-hosted
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      OSN_KEY: ${{ secrets.OSN_KEY }}
+      OSN_SECRET: ${{ secrets.OSN_SECRET }}
+    container: rocker/geospatial:latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install
+        shell: Rscript {0}
+        run: |
+          install.packages("remotes")
+          remotes::install_github("eco4cast/gefs4cast")
+          remotes::install_github("cboettig/duckdbfs")
+          install.packages("minioclient")
+          install.packages("decor")
+          install.packages("imputeTS")
+          install.packages("future")
+          install.packages("furrr")
+
+      - name: Update Stage3
+        shell: Rscript {0}
+        run: source("update_stage3_2.R")
+        
+  stage3_3:
+    runs-on: ubuntu-latest #self-hosted
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      OSN_KEY: ${{ secrets.OSN_KEY }}
+      OSN_SECRET: ${{ secrets.OSN_SECRET }}
+    container: rocker/geospatial:latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install
+        shell: Rscript {0}
+        run: |
+          install.packages("remotes")
+          remotes::install_github("eco4cast/gefs4cast")
+          remotes::install_github("cboettig/duckdbfs")
+          install.packages("minioclient")
+          install.packages("decor")
+          install.packages("imputeTS")
+          install.packages("future")
+          install.packages("furrr")
+
+      - name: Update Stage3
+        shell: Rscript {0}
+        run: source("update_stage3_3.R")
+        
+  stage3_4:
+    runs-on: ubuntu-latest #self-hosted
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      OSN_KEY: ${{ secrets.OSN_KEY }}
+      OSN_SECRET: ${{ secrets.OSN_SECRET }}
+    container: rocker/geospatial:latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install
+        shell: Rscript {0}
+        run: |
+          install.packages("remotes")
+          remotes::install_github("eco4cast/gefs4cast")
+          remotes::install_github("cboettig/duckdbfs")
+          install.packages("minioclient")
+          install.packages("decor")
+          install.packages("imputeTS")
+          install.packages("future")
+          install.packages("furrr")
+
+      - name: Update Stage3
+        shell: Rscript {0}
+        run: source("update_stage3_4.R")
+
+  stage3_5:
+    runs-on: ubuntu-latest #self-hosted
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      OSN_KEY: ${{ secrets.OSN_KEY }}
+      OSN_SECRET: ${{ secrets.OSN_SECRET }}
+    container: rocker/geospatial:latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install
+        shell: Rscript {0}
+        run: |
+          install.packages("remotes")
+          remotes::install_github("eco4cast/gefs4cast")
+          remotes::install_github("cboettig/duckdbfs")
+          install.packages("minioclient")
+          install.packages("decor")
+          install.packages("imputeTS")
+          install.packages("future")
+          install.packages("furrr")
+
+      - name: Update Stage3
+        shell: Rscript {0}
+        run: source("update_stage3_5.R")
+
+  stage3_6:
+    runs-on: ubuntu-latest #self-hosted
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      OSN_KEY: ${{ secrets.OSN_KEY }}
+      OSN_SECRET: ${{ secrets.OSN_SECRET }}
+    container: rocker/geospatial:latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install
+        shell: Rscript {0}
+        run: |
+          install.packages("remotes")
+          remotes::install_github("eco4cast/gefs4cast")
+          remotes::install_github("cboettig/duckdbfs")
+          install.packages("minioclient")
+          install.packages("decor")
+          install.packages("imputeTS")
+          install.packages("future")
+          install.packages("furrr")
+
+      - name: Update Stage3
+        shell: Rscript {0}
+        run: source("update_stage3_6.R")
+        
+  stage3_7:
+    runs-on: ubuntu-latest #self-hosted
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      OSN_KEY: ${{ secrets.OSN_KEY }}
+      OSN_SECRET: ${{ secrets.OSN_SECRET }}
+    container: rocker/geospatial:latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install
+        shell: Rscript {0}
+        run: |
+          install.packages("remotes")
+          remotes::install_github("eco4cast/gefs4cast")
+          remotes::install_github("cboettig/duckdbfs")
+          install.packages("minioclient")
+          install.packages("decor")
+          install.packages("imputeTS")
+          install.packages("future")
+          install.packages("furrr")
+
+      - name: Update Stage3
+        shell: Rscript {0}
+        run: source("update_stage3_7.R")
+        
+  stage3_8:
+    runs-on: ubuntu-latest #self-hosted
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      OSN_KEY: ${{ secrets.OSN_KEY }}
+      OSN_SECRET: ${{ secrets.OSN_SECRET }}
+    container: rocker/geospatial:latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install
+        shell: Rscript {0}
+        run: |
+          install.packages("remotes")
+          remotes::install_github("eco4cast/gefs4cast")
+          remotes::install_github("cboettig/duckdbfs")
+          install.packages("minioclient")
+          install.packages("decor")
+          install.packages("imputeTS")
+          install.packages("future")
+          install.packages("furrr")
+
+      - name: Update Stage3
+        shell: Rscript {0}
+        run: source("update_stage3_8.R")
+        
+      - name: Healthcheck
+        run: curl -m 10 --retry 5 https://hc-ping.com/6c3dec04-631a-4a8e-8c55-8837f2827e07
