@@ -37,6 +37,7 @@ jobs:
         run: source("update_stage3_1.R")
         
   stage3_2:
+    needs: pseudo_stage3_1
     runs-on: ubuntu-latest #self-hosted
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
@@ -63,6 +64,7 @@ jobs:
         run: source("update_stage3_2.R")
         
   stage3_3:
+    needs: pseudo_stage3_2
     runs-on: ubuntu-latest #self-hosted
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
