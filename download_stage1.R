@@ -1,6 +1,6 @@
 library(gdalcubes)
 library(gefs4cast)
-install.packages('arrow',version = 20.0.0)
+install.packages('arrow',version = '20.0.0')
 
 #devtools::install_github('cboettig/duckdbfs')
 #readRenviron("/home/rstudio/.Renviron")
