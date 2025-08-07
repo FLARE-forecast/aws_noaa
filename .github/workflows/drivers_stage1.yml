@@ -26,7 +26,8 @@ jobs:
           remotes::install_github("eco4cast/gefs4cast")
           install.packages("decor")
           install.packages("imputeTS")
-          install.packages("arrow", version = "20.0.0")
+          remotes::install_version("arrow", version = "20.0.0")
+          #install.packages("arrow", version = "20.0.0")
 
       - name: Download stage 1
         shell: Rscript {0}
