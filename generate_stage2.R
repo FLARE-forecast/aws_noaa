@@ -1,6 +1,7 @@
 #devtools::install_github('cboettig/duckdbfs')
 
-install.packages('arrow',version = '20.0.0')
+#install.packages('arrow',version = '20.0.0')
+remotes::install_version("arrow", version = "20.0.0")
 
 source("to_hourly.R")
 
