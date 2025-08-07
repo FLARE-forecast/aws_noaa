@@ -22,10 +22,12 @@ jobs:
       - name: Install
         shell: Rscript {0}
         run: |
+          devtools::install(dependencies=TRUE, upgrade="never")
           install.packages("remotes")
           remotes::install_github("eco4cast/gefs4cast")
           install.packages("decor")
           install.packages("imputeTS")
+          install.packages("arrow", version = "20.0.0")
 
       - name: Download stage 1
         shell: Rscript {0}
