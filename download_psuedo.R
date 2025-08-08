@@ -5,6 +5,8 @@ library(gefs4cast)
 #install.packages("arrow", version='20.0.0')
 remotes::install_version("arrow", version = "20.0.0")
 
+print(sessioninfo::package_info())
+
 gdalcubes::gdalcubes_options(parallel=34)
 #gdalcubes::gdalcubes_options(parallel=TRUE)
 #readRenviron("/home/rstudio/.Renviron")
