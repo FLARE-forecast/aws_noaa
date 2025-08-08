@@ -2,6 +2,7 @@ library(minioclient)
 source("to_hourly.R")
 
 remotes::install_version("arrow", version = "20.0.0")
+library(arrow)
 
 print(sessioninfo::package_info())
 
