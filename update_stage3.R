@@ -1,7 +1,9 @@
 source("to_hourly.R")
 install.packages('utils')
 
-install.packages("arrow", version='20.0.0')
+#install.packages("arrow", version='20.0.0')
+remotes::install_version("arrow", version = "20.0.0")
+library(arrow)
 
 locations <- readr::read_csv("site_list_v2.csv")
 site_list <- locations |> dplyr::pull(site_id)
