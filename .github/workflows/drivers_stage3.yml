@@ -27,6 +27,7 @@ jobs:
           install.packages("imputeTS")
           install.packages("future")
           install.packages("furrr")
+          remotes::install_version("arrow", version = "20.0.0")
           
       - name: Download Pseudo
         shell: Rscript {0}
