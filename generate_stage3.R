@@ -3,6 +3,8 @@ source("to_hourly.R")
 
 remotes::install_version("arrow", version = "20.0.0")
 
+print(sessioninfo::package_info())
+
 duckdbfs::duckdb_secrets(
     endpoint = 'amnh1.osn.mghpcc.org',
     key = Sys.getenv("OSN_KEY"),
