@@ -6,10 +6,10 @@ library(arrow)
 
 print(sessioninfo::package_info())
 
-duckdbfs::duckdb_secrets(
-    endpoint = 'amnh1.osn.mghpcc.org',
-    key = Sys.getenv("OSN_KEY"),
-    secret = Sys.getenv("OSN_SECRET"))
+#duckdbfs::duckdb_secrets(
+#    endpoint = 'amnh1.osn.mghpcc.org',
+#    key = Sys.getenv("OSN_KEY"),
+#    secret = Sys.getenv("OSN_SECRET"))
 
 #install_mc()
 mc_alias_set("osn", "amnh1.osn.mghpcc.org", "", "")
@@ -62,8 +62,8 @@ furrr::future_walk(site_list, function(curr_site_id, locations){
     to_hourly(use_solar_geom = TRUE, psuedo = TRUE, locations = locations) |>
     dplyr::mutate(ensemble = as.numeric(stringr::str_sub(ensemble, start = 4, end = 5))) |>
     dplyr::rename(parameter = ensemble) |>
-    #arrow::write_dataset(path = s3, partitioning = "site_id")
-    duckdbfs::write_dataset(path = "s3://bio230121-bucket01/flare/drivers/met/gefs-v12/stage3", format = 'parquet',
-                              partitioning = "site_id")
+    arrow::write_dataset(path = s3, partitioning = "site_id")
+    #duckdbfs::write_dataset(path = "s3://bio230121-bucket01/flare/drivers/met/gefs-v12/stage3", format = 'parquet',
+    #                          partitioning = "site_id")
 },
 locations)
