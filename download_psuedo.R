@@ -2,7 +2,8 @@
 library(gdalcubes)
 library(gefs4cast)
 
-install.packages("arrow", version='20.0.0')
+#install.packages("arrow", version='20.0.0')
+remotes::install_version("arrow", version = "20.0.0")
 
 gdalcubes::gdalcubes_options(parallel=34)
 #gdalcubes::gdalcubes_options(parallel=TRUE)
