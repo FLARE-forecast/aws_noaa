@@ -2,7 +2,7 @@ source("to_hourly.R")
 install.packages('utils')
 
 #install.packages("arrow", version='20.0.0')
-remotes::install_version("arrow", version = "20.0.0")
+#remotes::install_version("arrow", version = "20.0.0")
 library(arrow)
 
 locations <- readr::read_csv("site_list_v2.csv")
@@ -10,9 +10,9 @@ site_list <- locations |> dplyr::pull(site_id)
 
 #future::plan("future::multisession", workers = parallel::detectCores())
 
-future::plan("future::sequential")
+#future::plan("future::sequential")
 
-furrr::future_walk(site_list, function(curr_site_id){
+purrr::walk(site_list, function(curr_site_id){
   
   print(curr_site_id)
   
