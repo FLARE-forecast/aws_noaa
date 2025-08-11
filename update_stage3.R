@@ -79,17 +79,25 @@ purrr::walk(site_list, function(curr_site_id){
     rm(stage3_df)
     gc()
     
+    df2 <- df2 |>
+      dplyr::bind_rows(stage3_df_update)
+
+    print("here5")
+    
+    df2 <- df2 |>
+      dplyr::arrange(variable, datetime, parameter)
+
+    print("here6")
+
     df2 |>
-      dplyr::bind_rows(stage3_df_update) |>
-      dplyr::arrange(variable, datetime, parameter) |>
       readr::write_csv("temp.csv") 
     
-    print("here5")
+    print("here7")
 
     readr::read_csv("temp.csv") |>
     arrow::write_dataset(path = s3 , partitioning = "site_id")
 
-    print("here6")
+    print("here8")
   }
   rm(stage3_df_update)
   rm(df2)
