@@ -10,11 +10,14 @@ site_list <- locations |> dplyr::pull(site_id)
 
 #future::plan("future::multisession", workers = parallel::detectCores())
 
-#future::plan("future::sequential")
+future::plan("future::sequential")
 
 purrr::walk(site_list, function(curr_site_id){
   
   print(curr_site_id)
+  
+  locations_site <- locations |> 
+    dplyr::filter(site_id == curr_site_id)
   
   s3 <- arrow::s3_bucket("bio230121-bucket01/flare/drivers/met/gefs-v12/stage3",
                          endpoint_override = "amnh1.osn.mghpcc.org",
@@ -38,6 +41,8 @@ purrr::walk(site_list, function(curr_site_id){
   
   cut_off <- as.character(lubridate::as_date(max_date) - lubridate::days(3))
   
+  print("here1")
+  
   df <- arrow::open_dataset(s3_pseudo) |>
     dplyr::filter(variable %in% c("PRES","TMP","RH","UGRD","VGRD","APCP","DSWRF","DLWRF")) |>
     dplyr::filter(site_id == curr_site_id,
@@ -52,10 +57,12 @@ purrr::walk(site_list, function(curr_site_id){
   rm(s3_pseudo)
   gc()
   
+  print("here2")
+  
   if(nrow(df) > 0){
     
     df2 <- df |>
-      to_hourly(use_solar_geom = TRUE, psuedo = TRUE, locations = locations) |>
+      to_hourly(use_solar_geom = TRUE, psuedo = TRUE, locations = locations_site) |>
       dplyr::mutate(ensemble = as.numeric(stringr::str_sub(ensemble, start = 4, end = 5))) |>
       dplyr::rename(parameter = ensemble)
     
