@@ -84,10 +84,12 @@ purrr::walk(site_list, function(curr_site_id){
       dplyr::arrange(variable, datetime, parameter) |>
       arrow::write_dataset("tmp_new.parquet")
 
+    print("here5")
+
     arrow::open_dataset("tmp_new.parquet") |>
     arrow::write_dataset(path = s3 , partitioning = "site_id")
 
-    print("here5")
+    print("here6")
   }
   rm(stage3_df_update)
   rm(df2)
