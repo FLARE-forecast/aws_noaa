@@ -64,7 +64,8 @@ purrr::walk(site_list, function(curr_site_id){
     df2 <- df |>
       to_hourly(use_solar_geom = TRUE, psuedo = TRUE, locations = locations_site) |>
       dplyr::mutate(ensemble = as.numeric(stringr::str_sub(ensemble, start = 4, end = 5))) |>
-      dplyr::rename(parameter = ensemble)
+      dplyr::rename(parameter = ensemble) |> 
+      dplyr::distinct()
 
     print("here3")
     
@@ -72,32 +73,18 @@ purrr::walk(site_list, function(curr_site_id){
     gc()
     
     stage3_df_update <- stage3_df |>
-      dplyr::filter(datetime < min(df2$datetime))
+      dplyr::filter(datetime < min(df2$datetime)) |> 
+      dplyr::distinct()
 
     print("here4")
     
     rm(stage3_df)
     gc()
     
-    df2 <- df2 |>
-      dplyr::bind_rows(stage3_df_update)
-
-    print("here5")
-    
-    df2 <- df2 |>
-      dplyr::arrange(variable, datetime, parameter)
-
-    print("here6")
-
     df2 |>
-      readr::write_csv("temp.csv") 
-    
-    print("here7")
-
-    readr::read_csv("temp.csv") |>
-    arrow::write_dataset(path = s3 , partitioning = "site_id")
-
-    print("here8")
+      dplyr::bind_rows(stage3_df_update) |>
+      dplyr::arrange(variable, datetime, parameter) |>
+      arrow::write_dataset(path = s3, partitioning = "site_id")
   }
   rm(stage3_df_update)
   rm(df2)
