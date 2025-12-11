@@ -28,7 +28,7 @@ s3 <- gefs_s3_dir("pseudo", path = "flare/drivers/met", endpoint = "https://amnh
 have_dates <- gsub("reference_datetime=", "", s3$ls())
 #missing_dates <- dates_pseudo[!(as.character(dates_pseudo) %in% have_dates)]
 
-missing_dates <- "2025-08-04"
+missing_dates <- "2025-08-05"
 
 #parquet_path <- 'bio230121-bucket01/flare/drivers/met/gefs-v12/pseudo'
 gefs4cast:::gefs_pseudo_measures(missing_dates,  path = s3, sites = sites)
