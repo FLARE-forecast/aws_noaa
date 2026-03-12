@@ -38,7 +38,7 @@ jobs:
         run: source("update_stage3.R")
 
       - name: Healthcheck
-        run:           
+        run: |           
           sudo apt-get update
           sudo apt-get install -y curl
           curl -m 10 --retry 5 https://hc-ping.com/6c3dec04-631a-4a8e-8c55-8837f2827e07
