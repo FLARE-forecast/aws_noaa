@@ -38,4 +38,7 @@ jobs:
         run: source("generate_stage2.R")
 
       - name: Healthcheck
-        run: curl -m 10 --retry 5 https://hc-ping.com/3c7408aa-070a-4985-a856-356606a297b7
+        run: |           
+          sudo apt-get update
+          sudo apt-get install -y curl
+          run: curl -m 10 --retry 5 https://hc-ping.com/3c7408aa-070a-4985-a856-356606a297b7
