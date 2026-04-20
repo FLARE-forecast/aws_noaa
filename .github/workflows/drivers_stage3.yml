@@ -16,7 +16,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install
+      - name: Install libuv
+        shell: bash
+        run: |
+          apt-get update
+          apt-get install -y libuv1 libuv1-dev
+
+      - name: Install packages
         shell: Rscript {0}
         run: |
           install.packages("remotes")
