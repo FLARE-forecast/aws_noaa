@@ -33,7 +33,7 @@ jobs:
           install.packages("decor")
           install.packages("imputeTS")
           #install.packages('arrow')
-          #remotes::install_version("arrow", version = "20.0.0")
+          remotes::install_version("arrow", version = "23.0.1")
           #install.packages("arrow", version = "20.0.0")
 
       - name: Download stage 1
