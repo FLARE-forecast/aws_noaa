@@ -1,7 +1,7 @@
 library(gdalcubes)
 library(gefs4cast)
 #install.packages('arrow',version = '20.0.0')
-remotes::install_version("arrow", version = "23.0.1")
+#remotes::install_version("arrow", version = "23.0.1")
 library(arrow)
 
 print(sessioninfo::package_info())
