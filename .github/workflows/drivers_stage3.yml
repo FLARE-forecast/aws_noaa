@@ -28,6 +28,7 @@ jobs:
         shell: Rscript {0}
         run: |
           install.packages("remotes")
+          remotes::install_github("appelmar/gdalcubes")
           remotes::install_github("eco4cast/gefs4cast")
           remotes::install_github("cboettig/duckdbfs")
           install.packages("minioclient")
